@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { prisma } from "../../../prisma/prisma.js";
 import { User } from "../../../domain/user/user.js";
 import {
@@ -9,13 +10,15 @@ import {
 export const createUser = async (req, res, next) => {
   try {
     const { name, password } = req.body;
-    const user = User.create(null, name, password);
+    const user = User.create(null, name.toLowerCase(), password);
     await nameToCheck(user.name, req.params.group_id);
+
+    const hashedPassword = await hashPassword(user.passowrd);
 
     await prisma.user.create({
       data: {
         name: user.name,
-        password: user.passowrd,
+        password: hashedPassword,
         group_id: req.params.groupId,
       },
     });
@@ -37,6 +40,11 @@ async function nameToCheck(name, groupId) {
   }
 
   return;
+}
+
+async function hashPassword(password) {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
 }
 
 export const deleteUser = async (req, res, next) => {
@@ -83,14 +91,20 @@ async function findUser(name, password, groupId) {
     },
   });
 
+  const isMatch = await verifyPassword(password, findUser.password);
+
   if (!findUser) {
     throw new NotFoundError("닉네임을 확인해주세요");
   }
-  if (findUser.name === name && findUser.password !== password) {
+  if (findUser.name === name && !isMatch) {
     throw new UnauthorizedError("비밀번호를 확인해주세요");
   }
 
   return findUser;
+}
+
+async function verifyPassword(inputPassword, hashedPassword) {
+  return await bcrypt.compare(inputPassword, hashedPassword);
 }
 
 export const createOwner = async (req, res, next) => {
