@@ -15,6 +15,13 @@ export class BadRequestError extends HttpError {
   }
 }
 
+// 401 Unauthorized (비밀번호 실패)
+export class UnauthorizedError extends HttpError {
+  constructor(message = "인증 정보가 일치하지 않습니다.") {
+    super(401, message);
+  }
+}
+
 // 404 Not Found (유저, 글, 상품 등이 존재하지 않음)
 export class NotFoundError extends HttpError {
   constructor(message = "요청한 리소스를 찾을 수 없습니다.") {
