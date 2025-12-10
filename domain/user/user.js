@@ -1,13 +1,13 @@
 export class User {
   constructor(id, name, passowrd) {
-    this.id = id;
+    this.id = String(id);
     this.name = name;
     this.passowrd = passowrd;
   }
 
-  static create(name, password) {
+  static create(id = null, name, password) {
     validate(name, password);
-    return new User(null, name, password);
+    return new User(id, name, password);
   }
 }
 

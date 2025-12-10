@@ -1,16 +1,16 @@
 import { prisma } from "../../../prisma/prisma.js";
 import { User } from "../../../domain/user/user.js";
-import { ConflictError } from "../../errors/customError.js";
+import {
+  ConflictError,
+  NotFoundError,
+  UnauthorizedError,
+} from "../../errors/customError.js";
 
 export const createUser = async (req, res, next) => {
   try {
     const { name, password } = req.body;
-    const user = User.create(name, password);
-
-    nicknameCheck(user.name, req.params.group_id);
-    if (nicknameCheck) {
-      throw new ConflictError("중복된 닉네임 입니다");
-    }
+    const user = User.create(null, name, password);
+    await nameToCheck(user.name, req.params.group_id);
 
     await prisma.user.create({
       data: {
@@ -25,15 +25,72 @@ export const createUser = async (req, res, next) => {
   }
 };
 
-async function nicknameCheck(name, groupId) {
-  const nicknameCheck = await prisma.user.findFirst({
+async function nameToCheck(name, groupId) {
+  const user = await prisma.user.findFirst({
     where: {
       name: name,
       group_id: groupId,
     },
   });
+  if (user) {
+    throw new ConflictError("중복된 닉네임 입니다");
+  }
 
-  return nicknameCheck ? true : false;
+  return;
+}
+
+export const deleteUser = async (req, res, next) => {
+  try {
+    const { name, password } = req.body;
+
+    const getUser = await findUser(name, password, req.params.groupId);
+    const user = User.create(getUser.id, getUser.name, getUser.password);
+
+    await prisma.user.delete({
+      where: {
+        id: user.id,
+      },
+    });
+    res.json({ message: "그룹 참여를 취소하였습니다" });
+  } catch (e) {
+    next(e);
+  }
+};
+
+//[그룹 운동 기록 생성] 담당에서 구현될 것 같아서 [보류]
+// export const userToParticipate = async (req, res, next) => {
+//   const { name, password } = req.body;
+
+//   const getUser = await findUser(name, req.params.groupId);
+
+//   if (!getUser) {
+//     throw new NotFoundError("닉네임을 확인해주세요");
+//   }
+//   if (getUser.name === name && getUser.password !== password) {
+//     throw new UnauthorizedError("비밀번호를 확인해주세요");
+//   }
+
+//   const user = User.create(getUser.id, getUser.name, getUser.password);
+
+//   res.json({ message: "userToParticipate" });
+// };
+
+async function findUser(name, password, groupId) {
+  const findUser = await prisma.user.findFirst({
+    where: {
+      name,
+      group_id: groupId,
+    },
+  });
+
+  if (!findUser) {
+    throw new NotFoundError("닉네임을 확인해주세요");
+  }
+  if (findUser.name === name && findUser.password !== password) {
+    throw new UnauthorizedError("비밀번호를 확인해주세요");
+  }
+
+  return findUser;
 }
 
 export const createOwner = async (req, res, next) => {
