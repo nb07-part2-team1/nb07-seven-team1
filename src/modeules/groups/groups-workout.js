@@ -2,6 +2,7 @@
 
 import { WorkoutRecord } from "./groups-workout-record.model.js";
 import prisma from "../../../prisma/prisma.js";
+import { matchesGlob } from "path";
 
 const BADGE_100_WORKOUTS = "운동 기록 100개 이상";
 
@@ -40,8 +41,8 @@ export const createRecord = async (recordData) => {
         category: workoutType,
         description: description || null,
         time: new Date(),
+        distance: Math.floor(distance),
         duration_seconds: time,
-        distance: distance,
         images: images || [],
         user_id: user.id,
       },
@@ -183,8 +184,8 @@ export const updateRecord = async (
     where: { id: BigInt(recordId) },
     data: {
       description: updateData.description,
-      duration_seconds: updateData.time,
-      distance: updateData.distance,
+      time: new Date(),
+      distance: Math.floor(updateData.distance),
       images: updateData.images,
     },
     include: { user: true },
