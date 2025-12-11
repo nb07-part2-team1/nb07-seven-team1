@@ -1,7 +1,9 @@
 //../modeules/groups/groups-workout.js
 
-import { WorkoutRecord } from "./workout-record.model.js";
-import prisma from "../../prisma/prisma.js";
+import { WorkoutRecord } from "./groups-workout-record.model.js";
+import prisma from "../../../prisma/prisma.js";
+
+const BADGE_100_WORKOUTS = "운동 기록 100개 이상";
 
 // 기록 생성
 //닉네임, 운동 종류(달리기, 자전거, 수영),
@@ -20,7 +22,7 @@ export const createRecord = async (recordData) => {
   try {
     // 1. 사용자 인증 및 그룹 등록 유저 확인
     // 닉네임, 비밀번호를 확인하여 그룹에 등록된 유저일 때만 기록 등록이 가능합니다.
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: { name: authorNickname },
       select: { id: true, password: true, group_id: true },
     });
@@ -46,12 +48,63 @@ export const createRecord = async (recordData) => {
       include: { user: true },
     });
 
+    if (user.group_id) {
+      // group_id가 유효한 경우에만 실행
+      const groupId = user.group_id;
+
+      const workoutCount = await prisma.workoutLog.count({
+        where: {
+          user: {
+            group_id: BigInt(groupId), // user를 통한 group_id 필터링
+          },
+        },
+      });
+
+      if (workoutCount >= 100) {
+        const badgeExists = await prisma.badge.findFirst({
+          where: {
+            group_id: BigInt(groupId),
+            content: BADGE_100_WORKOUTS,
+          },
+        });
+
+        if (!badgeExists) {
+          await prisma.badge.create({
+            data: {
+              group_id: BigInt(groupId),
+              content: BADGE_100_WORKOUTS,
+            },
+          });
+          // 선택 사항: 배지 획득 알림 로직 추가 가능
+        }
+      }
+    }
+
     try {
       await sendDiscordNotification(newRecord, user.group_id);
     } catch (e) {
       console.error(e);
     }
     return WorkoutRecord.fromEntity(newRecord);
+  } catch (error) {
+    throw error;
+  }
+};
+
+//상세 조회
+
+export const getRecordDetail = async (recordId) => {
+  try {
+    const record = await prisma.workoutLog.findUnique({
+      where: { id: BigInt(recordId) },
+      include: { user: { select: { name: true } } },
+    });
+
+    if (!record) {
+      throw new Error("RecordNotFound");
+    }
+
+    return WorkoutRecord.fromEntity(record);
   } catch (error) {
     throw error;
   }
@@ -78,7 +131,7 @@ export const getRecords = async (query) => {
       ...(search && { name: { contains: search, mode: "insensitive" } }),
     },
   };
-
+  // 닉네임으로 검색 가능합니다.
   try {
     const totalRecords = await prisma.workoutLog.count({
       where: whereCondition,
