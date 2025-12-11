@@ -1,19 +1,19 @@
 //src/routers/groups/groups-workout.router.js
 
 import express from "express";
-import { validateRecord } from "../../modules/groups/groups-workout-validation.js";
+import { validateWorkoutRecord } from "../../modeules/groups/groups-workout-validation.js";
 import {
   createRecord,
   getRecords,
   getRecordDetail,
   updateRecord,
   deleteRecord,
-} from "../../modules/groups/groups-workout.js";
+} from "../../modeules/groups/groups-workout.js";
 
 const router = express.Router();
 
 //post
-router.post("/records", validateRecord, async (req, res, next) => {
+router.post("/records", validateWorkoutRecord, async (req, res, next) => {
   try {
     const newRecord = await createRecord(req.body);
 
@@ -50,26 +50,30 @@ router.get("/records/:recordId", async (req, res, next) => {
 });
 
 //patch
-router.patch("/records/:recordId", validateRecord, async (req, res, next) => {
-  try {
-    const { recordId } = req.params;
-    const { authorNickname, authorPassword, ...updateData } = req.body;
+router.patch(
+  "/records/:recordId",
+  validateWorkoutRecord,
+  async (req, res, next) => {
+    try {
+      const { recordId } = req.params;
+      const { authorNickname, authorPassword, ...updateData } = req.body;
 
-    const updatedRecord = await updateRecord(
-      recordId,
-      updateData,
-      authorNickname,
-      authorPassword
-    );
+      const updatedRecord = await updateRecord(
+        recordId,
+        updateData,
+        authorNickname,
+        authorPassword
+      );
 
-    return res.status(200).json({
-      message: "운동 기록이 성공적으로 수정되었습니다.",
-      record: updatedRecord,
-    });
-  } catch (error) {
-    next(error);
+      return res.status(200).json({
+        message: "운동 기록이 성공적으로 수정되었습니다.",
+        record: updatedRecord,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 //delete
 router.delete("/records/:recordId", async (req, res, next) => {
