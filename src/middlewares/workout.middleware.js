@@ -1,6 +1,6 @@
 //../modeules/groups/groups-workout-validation.js
 
-import { BadRequestError } from "../../errors/customError.js";
+import { BadRequestError } from "../errors/customError.js";
 //기록되는 운동 3가지 defination
 const recordingWorkoutType = ["run", "bicycle", "swim"];
 
