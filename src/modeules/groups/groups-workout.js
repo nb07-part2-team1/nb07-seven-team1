@@ -2,8 +2,7 @@
 
 import { WorkoutRecord } from "./groups-workout-record.model.js";
 import prisma from "../../../prisma/prisma.js";
-
-const BADGE_100_WORKOUTS = "운동 기록 100개 이상";
+import { NotFoundError, UnauthorizedError } from "../../errors/customError.js";
 
 // 기록 생성
 //닉네임, 운동 종류(달리기, 자전거, 수영),
@@ -28,10 +27,12 @@ export const createRecord = async (recordData) => {
     });
 
     if (!user) {
-      throw new Error("UserNotFound");
+      throw new NotFoundError("사용자 정보를 찾을 수 없습니다.");
     }
     if (authorPassword !== user.password) {
-      throw new Error("InvalidPassword");
+      throw new UnauthorizedError(
+        "비밀번호가 일치하지 않아 인증에 실패했습니다."
+      );
     }
 
     //workout record data 운동 기록 데이터
@@ -39,46 +40,14 @@ export const createRecord = async (recordData) => {
       data: {
         category: workoutType,
         description: description || null,
+        distance: Math.floor(distance),
         time: new Date(),
         duration_seconds: time,
-        distance: distance,
         images: images || [],
         user_id: user.id,
       },
       include: { user: true },
     });
-
-    if (user.group_id) {
-      // group_id가 유효한 경우에만 실행
-      const groupId = user.group_id;
-
-      const workoutCount = await prisma.workoutLog.count({
-        where: {
-          user: {
-            group_id: BigInt(groupId), // user를 통한 group_id 필터링
-          },
-        },
-      });
-
-      if (workoutCount >= 100) {
-        const badgeExists = await prisma.badge.findFirst({
-          where: {
-            group_id: BigInt(groupId),
-            content: BADGE_100_WORKOUTS,
-          },
-        });
-
-        if (!badgeExists) {
-          await prisma.badge.create({
-            data: {
-              group_id: BigInt(groupId),
-              content: BADGE_100_WORKOUTS,
-            },
-          });
-          // 선택 사항: 배지 획득 알림 로직 추가 가능
-        }
-      }
-    }
 
     try {
       await sendDiscordNotification(newRecord, user.group_id);
@@ -92,7 +61,7 @@ export const createRecord = async (recordData) => {
 };
 
 //상세 조회
-
+// 운동 종류, 설명, 사진(여러장), 시간, 거리, 닉네임 조회가 가능합니다.
 export const getRecordDetail = async (recordId) => {
   try {
     const record = await prisma.workoutLog.findUnique({
@@ -101,7 +70,7 @@ export const getRecordDetail = async (recordId) => {
     });
 
     if (!record) {
-      throw new Error("RecordNotFound");
+      throw new NotFoundError("해당 운동 기록을 찾을 수 없습니다.");
     }
 
     return WorkoutRecord.fromEntity(record);
@@ -171,20 +140,22 @@ export const updateRecord = async (
     include: { user: true },
   });
   if (!record) {
-    throw new Error("RecordNotFound");
+    throw new NotFoundError("해당 운동 기록을 찾을 수 없습니다.");
   }
   const owner = record.user;
 
   if (owner.name !== nickname || owner.password !== password) {
-    throw new Error("UnauthorizedAccess");
+    throw new UnauthorizedError(
+      "기록 작성자가 아니거나 비밀번호가 일치하지 않습니다."
+    );
   }
 
   const updatedRecord = await prisma.workoutLog.update({
     where: { id: BigInt(recordId) },
     data: {
       description: updateData.description,
-      duration_seconds: updateData.time,
-      distance: updateData.distance,
+      time: new Date(),
+      distance: Math.floor(updateData.distance),
       images: updateData.images,
     },
     include: { user: true },
@@ -195,19 +166,25 @@ export const updateRecord = async (
 
 //운동 기록 삭제
 export const deleteRecord = async (recordId, nickname, password) => {
-  const record = await prisma.workoutLog.findUnique({
-    where: { id: BigInt(recordId) },
-    include: { user: true },
-  });
-  if (!record) {
-    throw new Error("RecordNotFound");
-  }
-  const owner = record.user;
+  try {
+    const record = await prisma.workoutLog.findUnique({
+      where: { id: BigInt(recordId) },
+      include: { user: true },
+    });
+    if (!record) {
+      throw new NotFoundError("해당 운동 기록을 찾을 수 없습니다.");
+    }
+    const owner = record.user;
 
-  if (owner.name !== nickname || owner.password !== password) {
-    throw new Error("UnauthorizedAccess");
-  }
+    if (owner.name !== nickname || owner.password !== password) {
+      throw new UnauthorizedError(
+        "기록 작성자가 아니거나 비밀번호가 일치하지 않습니다."
+      );
+    }
 
-  await prisma.workoutLog.delete({ where: { id: BigInt(recordId) } });
-  return { message: "RecordDeleted" };
+    await prisma.workoutLog.delete({ where: { id: BigInt(recordId) } });
+    return { message: "RecordDeleted" };
+  } catch (error) {
+    throw error;
+  }
 };
