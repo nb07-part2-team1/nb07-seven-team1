@@ -1,15 +1,20 @@
 import { BadRequestError } from "../../src/errors/customError.js";
 
 export class User {
-  constructor(id, name, passowrd) {
+  constructor(id, name, password) {
     this.id = String(id);
     this.name = name;
-    this.passowrd = passowrd;
+    this.password = password;
   }
 
   static create(id = null, name, password) {
     validate(name, password);
     return new User(id, name, password);
+  }
+
+  //bigInt type 변환
+  static idToString(id) {
+    return new User(id);
   }
 }
 
@@ -17,7 +22,10 @@ function validateName(name) {
   const nameRegex = /^[a-z0-9가-힣]+$/;
 
   if (!name || name.trim().length === 0) {
-    throw new BadRequestError("닉네임을 입력해 주세요");
+    throw new BadRequestError({
+      path: "nicknmae",
+      message: "nickname is required",
+    });
   }
   if (/\s/.test(name)) {
     throw new BadRequestError("닉네임에 공백은 넣을 수 없습니다");
