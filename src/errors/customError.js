@@ -10,10 +10,16 @@ export class HttpError extends Error {
 
 // 400 Bad Request (형식 오류, validation 실패)
 export class BadRequestError extends HttpError {
-  constructor({ message = "잘못 된 요청입니다.", path }) {
+  constructor(msg) {
+    if (typeof msg === "string") {
+      super(400, msg);
+      return;
+    }
+
+    const { message = "잘못된 요청입니다.", path } = msg || {};
+
     super(400, message);
 
-    // path는 있을 때만 저장
     if (path !== undefined) {
       this.path = path;
     }

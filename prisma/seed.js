@@ -20,7 +20,7 @@ async function main() {
     // 2️⃣ 그룹의 방장 유저 생성
     const user = await tx.user.create({
       data: {
-        name: "그룹 방장",
+        name: "owner1",
         password: "password123", // seed용 임시 값
         group_id: group.id, // 그룹 소속
       },
