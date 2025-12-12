@@ -1,7 +1,7 @@
 import { createUserInGroup, deleteUserInGroup } from "./users.service.js";
 import { userResponse } from "./users.mapper.js";
 import bcrypt from "bcrypt";
-import prisma from "../../../prisma/prisma.js";
+import { prisma } from "../../../prisma/prisma.js";
 import { User } from "../../../domain/user/user.js";
 import {
   ConflictError,
