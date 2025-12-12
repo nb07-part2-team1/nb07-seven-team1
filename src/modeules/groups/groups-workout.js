@@ -3,6 +3,7 @@
 import { WorkoutRecord } from "./groups-workout-record.model.js";
 import { prisma } from "../../../prisma/prisma.js";
 import { NotFoundError, UnauthorizedError } from "../../errors/customError.js";
+import { time } from "console";
 
 // 기록 생성
 //닉네임, 운동 종류(달리기, 자전거, 수영),
@@ -42,7 +43,6 @@ export const createRecord = async (recordData) => {
         description: description || null,
         distance: Math.floor(distance),
         time: new Date(),
-        duration_seconds: time,
         images: images || [],
         user_id: user.id,
       },
@@ -66,7 +66,6 @@ export const getRecordDetail = async (recordId) => {
   try {
     const record = await prisma.workoutLog.findUnique({
       where: { id: BigInt(recordId) },
-      include: { user: { select: { name: true } } },
     });
 
     if (!record) {
@@ -93,7 +92,7 @@ export const getRecords = async (query) => {
   const skip = (parsedPage - 1) * parsedLimit;
 
   let orderByCondition =
-    sort === "time" ? { duration_seconds: "desc" } : { created_at: "desc" };
+    sort === "time" ? { time: "desc" } : { created_at: "desc" };
   const whereCondition = {
     user: {
       group_id: BigInt(groupId),
@@ -142,9 +141,9 @@ export const updateRecord = async (
   if (!record) {
     throw new NotFoundError("해당 운동 기록을 찾을 수 없습니다.");
   }
-  const owner = record.user;
+  const groupUser = record.user;
 
-  if (owner.name !== nickname || owner.password !== password) {
+  if (groupUser.name !== nickname || groupUser.password !== password) {
     throw new UnauthorizedError(
       "기록 작성자가 아니거나 비밀번호가 일치하지 않습니다."
     );
@@ -174,9 +173,9 @@ export const deleteRecord = async (recordId, nickname, password) => {
     if (!record) {
       throw new NotFoundError("해당 운동 기록을 찾을 수 없습니다.");
     }
-    const owner = record.user;
+    const groupUser = record.user;
 
-    if (owner.name !== nickname || owner.password !== password) {
+    if (groupUser.name !== nickname || groupUser.password !== password) {
       throw new UnauthorizedError(
         "기록 작성자가 아니거나 비밀번호가 일치하지 않습니다."
       );

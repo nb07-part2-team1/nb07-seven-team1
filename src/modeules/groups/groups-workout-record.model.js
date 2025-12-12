@@ -27,7 +27,7 @@ export class WorkoutRecord {
       nickname: entity.user.name,
       workoutType: entity.category,
       description: entity.description,
-      time: entity.duration_seconds,
+      time: entity.time,
       distance: entity.distance,
       images: entity.images || [],
       createdAt: entity.created_at,

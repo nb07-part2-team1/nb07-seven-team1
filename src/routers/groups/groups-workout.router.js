@@ -1,7 +1,7 @@
 //src/routers/groups/groups-workout.router.js
 
 import express from "express";
-import { validateWorkoutRecord } from "../../modeules/groups/groups-workout-validation.js";
+import { validateWorkoutRecord } from "../../middlewares/workout.middleware.js";
 import {
   createRecord,
   getRecords,
