@@ -47,36 +47,84 @@ function validate(name, password) {
 
 //user
 export class User {
-  constructor(id, name, password) {
-    this.id = String(id);
+  constructor(id, name, password, groupId, createdAt, updatedAt) {
+    this.id = id;
     this.name = name;
     this.password = password;
+    this.groupId = groupId;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
-  static create(id = null, name, password) {
-    validate(name, password);
-    return new User(id, name, password);
+  static create({ id, name, password, group_id, created_at, updated_at }) {
+    const info = {
+      id: id.toString(),
+      name,
+      password,
+      group_id: group_id.toString(),
+      created_at,
+      updated_at,
+    };
+
+    return new User(
+      info.id,
+      info.name,
+      info.password,
+      info.group_id,
+      info.created_at,
+      info.updated_at
+    );
+  }
+}
+
+export class unregisteredUser {
+  constructor(name, password, groupId) {
+    this.name = name;
+    this.password = password;
+    this.groupId = groupId;
   }
 
-  //bigInt type 변환
-  static idToString(id) {
-    return new User(id);
+  static create({ name, password, groupId }) {
+    const info = {
+      name,
+      password,
+      groupId,
+    };
+    validate(info.name, info.password);
+
+    return new unregisteredUser(info.name, info.password, info.groupId);
   }
 }
 
 //owner
-export class Owner {
-  constructor(id, nickName, userId, groupId, createAt, updateAt) {
-    this.id = String(id);
+export class UserInOwner {
+  constructor(id, nickName, userId, groupId, createdAt, updatedAt) {
+    this.id = id;
     this.nickName = nickName;
-    this.userId = String(userId);
-    this.groupId = String(groupId);
-    this.createAt = createAt;
-    this.updateAt = updateAt;
+    this.userId = userId;
+    this.groupId = groupId;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
-  static create(id, nickName, userId, groupId, createAt, updateAt) {
-    return new Owner(id, nickName, userId, groupId, createAt, updateAt);
+  static create({ id, nickName, userId, groupId, createdAt, updatedAt }) {
+    const info = {
+      id: id.toString(),
+      nickName,
+      userId: userId.toString(),
+      groupId: groupId.toString(),
+      createdAt,
+      updatedAt,
+    };
+
+    return new UserInOwner(
+      info.id,
+      info.nickName,
+      info.userId,
+      info.groupId,
+      info.createdAt,
+      info.updatedAt
+    );
   }
 }
 
@@ -91,10 +139,10 @@ export class Group {
     discordWebUrl,
     discordServerUrl,
     likeCount,
-    createAt,
-    updateAt
+    createdAt,
+    updatedAt
   ) {
-    this.id = String(id);
+    this.id = id;
     this.name = name;
     this.tags = tags;
     this.goalReps = goalReps;
@@ -102,8 +150,8 @@ export class Group {
     this.discordWebUrl = discordWebUrl;
     this.discordServerUrl = discordServerUrl;
     this.likeCount = likeCount;
-    this.createAt = createAt;
-    this.updateAt = updateAt;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   static create(
@@ -115,11 +163,11 @@ export class Group {
     discordWebUrl,
     discordServerUrl,
     likeCount,
-    createAt,
-    updateAt
+    createdAt,
+    updatedAt
   ) {
     return new Group(
-      id,
+      id.toString(),
       name,
       tags,
       goalReps,
@@ -127,8 +175,8 @@ export class Group {
       discordWebUrl,
       discordServerUrl,
       likeCount,
-      createAt,
-      updateAt
+      createdAt,
+      updatedAt
     );
   }
 }

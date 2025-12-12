@@ -1,13 +1,16 @@
-import { userResponse } from "./users.mapper.js";
-//function 관련 import
-import { User, Owner, Group } from "../../../domain/user/user.js";
+import { prisma } from "../../../prisma/prisma.js";
+import bcrypt from "bcrypt";
+import {
+  unregisteredUser,
+  User,
+  UserInOwner,
+  Group,
+} from "../../../domain/user/user.js";
 import {
   ConflictError,
   UnauthorizedError,
   NotFoundError,
 } from "../../errors/customError.js";
-import { prisma } from "../../../prisma/prisma.js";
-import bcrypt from "bcrypt";
 
 export const createUser = async (req, res, next) => {
   try {
@@ -49,21 +52,23 @@ export const deleteUser = async (req, res, next) => {
  * user create function
  */
 async function createUserInGroup({ nickname, password, groupId }) {
-  const user = User.create(null, nickname.toLowerCase(), password);
-  await nameToCheck(user.name, groupId);
-  const hashedPassword = await hashPassword(user.password);
-
+  const unregUser = unregisteredUser.create({
+    name: nickname.toLowerCase(),
+    password,
+    groupId,
+  });
+  await nameToCheck(unregUser.name, groupId);
+  const hashedPassword = await hashPassword(unregUser.password);
   const createUser = await prisma.user.create({
     data: {
-      name: user.name,
+      name: unregUser.name,
       password: hashedPassword,
       group_id: groupId,
     },
   });
-  const userId = User.idToString(createUser.id);
-  createUser.id = userId;
+  const user = User.create(createUser);
 
-  return createUser;
+  return user;
 }
 
 async function nameToCheck(name, groupId) {
@@ -89,8 +94,16 @@ async function hashPassword(password) {
  * user delete function
  */
 async function deleteUserInGroup({ nickname, password, groupId }) {
-  const user = User.create(null, nickname, password);
-  const getUser = await findUser(user.name, user.password, groupId);
+  const unregUser = unregisteredUser.create({
+    name: nickname,
+    password,
+    groupId,
+  });
+  const getUser = await findUser(
+    unregUser.name,
+    unregUser.password,
+    unregUser.groupId
+  );
 
   await prisma.user.delete({
     where: {
@@ -143,7 +156,7 @@ async function getGroup(groupId) {
   const groupRes = Group.create(
     groupData.id,
     groupData.name,
-    groupData.data,
+    groupData.tags,
     groupData.goal_reps,
     groupData.image,
     groupData.discord_web_url,
@@ -163,21 +176,53 @@ async function getOwner(groupId) {
     },
   });
 
-  const ownerNickname = await prisma.user.findFirst({
+  const ownerUserData = await prisma.user.findFirst({
     where: {
       id: ownerData.user_id,
       group_id: Number(groupId),
     },
   });
 
-  const owner = Owner.create(
-    ownerData.id,
-    ownerNickname.name,
-    ownerData.user_id,
-    ownerData.group_id,
-    ownerData.created_at,
-    ownerData.updated_at
-  );
+  const owner = UserInOwner.create({
+    id: ownerData.id,
+    nickName: ownerUserData.name,
+    userId: ownerUserData.id,
+    groupId: ownerUserData.group_id,
+    createdAt: ownerUserData.created_at,
+    updatedAt: ownerUserData.updated_at,
+  });
 
   return owner;
+}
+
+//mapper
+function userResponse(resUserData, resGroupData, resOwnerData) {
+  return {
+    id: resGroupData.id,
+    name: resGroupData.name,
+    description: "string", //스키마에 description 추가해야 함
+    photoUrl: resGroupData.image,
+    goalRep: resGroupData.goalReps,
+    discordWebhookUrl: resGroupData.discordWebUrl,
+    discordInviteUrl: resGroupData.discordServerUrl,
+    likeCount: resGroupData.likeCount,
+    tags: resGroupData.tags,
+    owner: {
+      id: resOwnerData.id,
+      nickname: resOwnerData.nickName,
+      createdAt: resOwnerData.createdAt,
+      updatedAt: resOwnerData.updatedAt,
+    },
+    participants: [
+      {
+        id: resUserData.id,
+        nickname: resUserData.name,
+        createdAt: resUserData.createdAt,
+        updatedAt: resUserData.updatedAt,
+      },
+    ],
+    createdAt: resGroupData.createdAt,
+    updatedAt: resGroupData.updatedAt,
+    badges: ["string"],
+  };
 }
