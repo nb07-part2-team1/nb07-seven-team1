@@ -5,7 +5,7 @@ import {
   User,
   UserInOwner,
   Group,
-} from "../../../domain/user/user.js";
+} from "../../../entities/user/user.js";
 import {
   ConflictError,
   UnauthorizedError,
