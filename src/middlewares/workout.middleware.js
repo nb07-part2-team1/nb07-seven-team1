@@ -1,4 +1,4 @@
-//../modeules/groups/groups-workout-validation.js
+// ../src/middlewares/workout.middleware.js
 
 import { BadRequestError } from "../errors/customError.js";
 //기록되는 운동 3가지 defination

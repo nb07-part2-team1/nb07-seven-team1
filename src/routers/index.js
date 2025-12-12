@@ -12,8 +12,9 @@ router.use("/groups", groupMainRouter);
 router.use("/groups", groupRankRouter);
 router.use("/groups", groupParticipantsRouter);
 router.use("/groups", groupLikeRouter);
-router.use("/groups", groupWorkoutRouter);
+router.use("/groups/:groupId", groupWorkoutRouter);
 
+router.use("/uesr", usersRouter);
 router.use("/groups", usersRouter);
 
 export default router;

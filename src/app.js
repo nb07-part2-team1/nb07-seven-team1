@@ -2,7 +2,6 @@ import express from "express";
 import router from "./routers/index.js";
 import cors from "cors";
 import { HttpError } from "./errors/customError.js";
-import workoutRouter from "./routers/groups/groups-workout.router.js";
 
 const app = express();
 
@@ -10,7 +9,6 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api", router);
-app.use("/api/groups/:groupId", workoutRouter);
 
 app.use((err, req, res, next) => {
   console.error(err);
