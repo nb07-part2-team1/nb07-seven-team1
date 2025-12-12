@@ -17,7 +17,6 @@ export class BadRequestError extends HttpError {
     }
 
     const { message = "잘못된 요청입니다.", path } = msg || {};
-
     super(400, message);
 
     if (path !== undefined) {
@@ -35,7 +34,6 @@ export class UnauthorizedError extends HttpError {
     }
 
     const { message = "인증 정보가 일치하지 않습니다.", path } = msg || {};
-
     super(401, message);
 
     if (path !== undefined) {
@@ -53,7 +51,6 @@ export class NotFoundError extends HttpError {
     }
 
     const { message = "해당 정보를 찾을 수 없습니다.", path } = msg || {};
-
     super(404, message);
 
     if (path !== undefined) {
@@ -71,7 +68,6 @@ export class ConflictError extends HttpError {
     }
 
     const { message = "중복 된 데이터 입니다.", path } = msg || {};
-
     super(409, message);
 
     if (path !== undefined) {
@@ -89,7 +85,6 @@ export class InternalServerError extends HttpError {
     }
 
     const { message = "서버 내부 오류가 발생했습니다.", path } = msg || {};
-
     super(500, message);
 
     if (path !== undefined) {
