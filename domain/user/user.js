@@ -77,7 +77,7 @@ export class User {
   }
 }
 
-export class unregisteredUser {
+export class UnregisteredUser {
   constructor(name, password, groupId) {
     this.name = name;
     this.password = password;
