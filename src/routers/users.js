@@ -1,9 +1,9 @@
 import express from "express";
-import * as usersController from "../modeules/users/index.js";
+import * as usersController from "../modeules/users/users-participation.js";
 
 const router = express.Router();
 
-router.post("/:groupId/users", usersController.createUser);
-router.delete("/:groupId/users", usersController.deleteUser);
+router.post("/:groupId/participants", usersController.createUser);
+router.delete("/:groupId/participants", usersController.deleteUser);
 
 export default router;
