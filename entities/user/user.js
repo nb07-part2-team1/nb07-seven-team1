@@ -92,7 +92,7 @@ export class UnregisteredUser {
     };
     validate(info.name, info.password);
 
-    return new unregisteredUser(info.name, info.password, info.groupId);
+    return new UnregisteredUser(info.name, info.password, info.groupId);
   }
 }
 

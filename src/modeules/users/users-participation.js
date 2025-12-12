@@ -1,7 +1,7 @@
 import { prisma } from "../../../prisma/prisma.js";
 import bcrypt from "bcrypt";
 import {
-  unregisteredUser,
+  UnregisteredUser,
   User,
   UserInOwner,
   Group,
@@ -25,7 +25,9 @@ export const createUser = async (req, res, next) => {
     const resGroupData = await getGroup(groupId);
     const resOwnerData = await getOwner(groupId);
 
-    res.status(201).json(userResponse(resUserData, resGroupData, resOwnerData));
+    const resData = userResponse(resUserData, resGroupData, resOwnerData);
+
+    res.status(201).json(resData);
   } catch (e) {
     next(e);
   }
@@ -52,7 +54,7 @@ export const deleteUser = async (req, res, next) => {
  * user create function
  */
 async function createUserInGroup({ nickname, password, groupId }) {
-  const unregUser = unregisteredUser.create({
+  const unregUser = UnregisteredUser.create({
     name: nickname.toLowerCase(),
     password,
     groupId,
@@ -94,7 +96,7 @@ async function hashPassword(password) {
  * user delete function
  */
 async function deleteUserInGroup({ nickname, password, groupId }) {
-  const unregUser = unregisteredUser.create({
+  const unregUser = UnregisteredUser.create({
     name: nickname,
     password,
     groupId,
