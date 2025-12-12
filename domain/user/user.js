@@ -1,5 +1,73 @@
 import { BadRequestError } from "../../src/errors/customError.js";
 
+//user group instance 용도
+export class Group {
+  constructor(
+    id,
+    name,
+    tags,
+    goalReps,
+    image,
+    discordWebUrl,
+    discordServerUrl,
+    likeCount,
+    createAt,
+    updateAt
+  ) {
+    this.id = String(id);
+    this.name = name;
+    this.tags = tags;
+    this.goalReps = goalReps;
+    this.image = image;
+    this.discordWebUrl = discordWebUrl;
+    this.discordServerUrl = discordServerUrl;
+    this.likeCount = likeCount;
+    this.createAt = createAt;
+    this.updateAt = updateAt;
+  }
+
+  static create(
+    id,
+    name,
+    tags,
+    goalReps,
+    image,
+    discordWebUrl,
+    discordServerUrl,
+    likeCount,
+    createAt,
+    updateAt
+  ) {
+    return new Group(
+      id,
+      name,
+      tags,
+      goalReps,
+      image,
+      discordWebUrl,
+      discordServerUrl,
+      likeCount,
+      createAt,
+      updateAt
+    );
+  }
+}
+
+export class Owner {
+  constructor(id, nickName, userId, groupId, createAt, updateAt) {
+    this.id = String(id);
+    this.nickName = nickName;
+    this.userId = String(userId);
+    this.groupId = String(groupId);
+    this.createAt = createAt;
+    this.updateAt = updateAt;
+  }
+
+  static create(id, nickName, userId, groupId, createAt, updateAt) {
+    return new Owner(id, nickName, userId, groupId, createAt, updateAt);
+  }
+}
+
 export class User {
   constructor(id, name, password) {
     this.id = String(id);

@@ -1,4 +1,4 @@
-import { User } from "../../../domain/user/user.js";
+import { User, Owner, Group } from "../../../domain/user/user.js";
 import {
   ConflictError,
   UnauthorizedError,
@@ -89,4 +89,57 @@ async function findUser(name, password, groupId) {
 
 async function verifyPassword(inputPassword, hashedPassword) {
   return await bcrypt.compare(inputPassword, hashedPassword);
+}
+
+/**
+ * group, owner
+ * reponse data GET
+ */
+export async function getGroup(groupId) {
+  const groupData = await prisma.group.findFirst({
+    where: {
+      id: Number(groupId),
+    },
+  });
+
+  const groupRes = Group.create(
+    groupData.id,
+    groupData.name,
+    groupData.data,
+    groupData.goal_reps,
+    groupData.image,
+    groupData.discord_web_url,
+    groupData.discord_server_url,
+    groupData.like_count,
+    groupData.created_at,
+    groupData.updated_at
+  );
+
+  return groupRes;
+}
+
+export async function getOwner(groupId) {
+  const ownerData = await prisma.owner.findFirst({
+    where: {
+      group_id: Number(groupId),
+    },
+  });
+
+  const ownerNickname = await prisma.user.findFirst({
+    where: {
+      id: ownerData.user_id,
+      group_id: Number(groupId),
+    },
+  });
+
+  const owner = Owner.create(
+    ownerData.id,
+    ownerNickname.name,
+    ownerData.user_id,
+    ownerData.group_id,
+    ownerData.created_at,
+    ownerData.updated_at
+  );
+
+  return owner;
 }

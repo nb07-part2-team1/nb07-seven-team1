@@ -1,4 +1,9 @@
-import { createUserInGroup, deleteUserInGroup } from "./users.service.js";
+import {
+  createUserInGroup,
+  deleteUserInGroup,
+  getGroup,
+  getOwner,
+} from "./users.service.js";
 import { userResponse } from "./users.mapper.js";
 
 export const createUser = async (req, res, next) => {
@@ -11,8 +16,10 @@ export const createUser = async (req, res, next) => {
       password,
       groupId,
     });
+    const resGroupData = await getGroup(groupId);
+    const resOwnerData = await getOwner(groupId);
 
-    res.status(201).json(userResponse(resUserData));
+    res.status(201).json(userResponse(resUserData, resGroupData, resOwnerData));
   } catch (e) {
     next(e);
   }
