@@ -8,7 +8,7 @@
 //헬퍼 사용 api 명세를 도저히 복잡해서 여기서는 못따라감
 //클래스 사용, 유효성 검사,  완료 스키마 변경요청 .. 안된다면 내꺼 변경 가능성 높은것들 주석표시
 //헬퍼js 사용시 api test 잘나오느것 확인
-//다시 entity 짜고 main 에 적용 확인 완료 ! ㅎ
+//다시 entity 짜고 main 에 적용 확인 완료 ! ㅎasdasdasdasdasdasd
 
 import { PrismaClient } from "@prisma/client";
 import { entityGroup } from "../../entitys/groupEntitys.js";
