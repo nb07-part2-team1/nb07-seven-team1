@@ -4,7 +4,7 @@ import {
   UnauthorizedError,
   NotFoundError,
 } from "../../errors/customError.js";
-import { prisma } from "../../../prisma/prisma.js";
+import prisma from "../../../prisma/prisma.js";
 import bcrypt from "bcrypt";
 
 /**

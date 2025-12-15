@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api", router);
-app.use("/api/groups-workout", workoutRouter);
+app.use("/api/groups/:groupId", workoutRouter);
 
 app.use((err, req, res, next) => {
   console.error(err);

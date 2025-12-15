@@ -57,6 +57,7 @@ model WorkoutLog {
   description String
   time        Int
   distance    Int
+  duration_seconds Int? 
   images      String[]
   created_at         DateTime @default(now()) @db.Timestamptz(6)
   
