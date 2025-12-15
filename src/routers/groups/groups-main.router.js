@@ -5,7 +5,7 @@ import {
   getGroupDetail,
   patchGroup,
   deleteGroup,
-} from "../groups/groups-main.js";
+} from "../../modeules/groups/groups-main.js";
 
 const router = express.Router();
 
