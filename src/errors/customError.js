@@ -13,7 +13,6 @@ export class BadRequestError extends HttpError {
   constructor({ message = "잘못된 요청입니다.", path } = {}) {
     super(400, message);
 
-    // path는 있을 때만 저장
     if (path !== undefined) {
       this.path = path;
     }

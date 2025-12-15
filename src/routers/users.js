@@ -1,5 +1,5 @@
 import express from "express";
-import * as usersController from "../modeules/users/index.js";
+import * as usersController from "../modeules/users/users-participation.js";
 
 const router = express.Router();
 
