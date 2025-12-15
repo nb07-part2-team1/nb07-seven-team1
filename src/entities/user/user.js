@@ -5,18 +5,27 @@ function validateName(name) {
 
   if (!name || name.trim().length === 0) {
     throw new BadRequestError({
-      path: "nicknmae",
+      path: "nickname",
       message: "nickname is required",
     });
   }
   if (/\s/.test(name)) {
-    throw new BadRequestError("닉네임에 공백은 넣을 수 없습니다");
+    throw new BadRequestError({
+      path: "nickname",
+      message: "닉네임에 공백은 넣을 수 없습니다",
+    });
   }
   if (name.length < 3 || name.length > 10) {
-    throw new BadRequestError("닉네임은 3 ~ 10자로 작성해 주세요");
+    throw new BadRequestError({
+      path: "nickname",
+      message: "n닉네임은 3 ~ 10자로 작성해 주세요",
+    });
   }
   if (!nameRegex.test(name)) {
-    throw new BadRequestError("닉네임은 한글, 영문, 숫자만 사용 가능합니다");
+    throw new BadRequestError({
+      path: "nickname",
+      message: "닉네임은 한글, 영문, 숫자만 사용 가능합니다",
+    });
   }
 }
 
@@ -25,29 +34,128 @@ function validatePassword(password) {
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]:;"'<>,.?/]).{8,20}$/;
 
   if (!password || password.trim().length === 0) {
-    throw new BadRequestError("비밀번호를 입력해 주세요");
+    throw new BadRequestError({
+      path: "password",
+      message: "비밀번호를 입력해 주세요",
+    });
   }
   if (password.length < 8 || password.length > 20) {
-    throw new BadRequestError("비밀번호는 8 ~ 20자로 작성해 주세요");
+    throw new BadRequestError({
+      path: "password",
+      message: "비밀번호는 8 ~ 20자로 작성해 주세요",
+    });
   }
   if (!regex.test(password)) {
-    throw new BadRequestError(
-      "비밀번호는 영문 + 숫자 + 특수문자를 포함해야 합니다"
-    );
+    throw new BadRequestError({
+      path: "password",
+      message: "비밀번호는 영문 + 숫자 + 특수문자를 포함해야 합니다",
+    });
   }
   if (/\s/.test(password)) {
-    throw new BadRequestError("비밀번호에 공백은 넣을 수 없습니다");
+    throw new BadRequestError({
+      path: "password",
+      message: "비밀번호에 공백은 넣을 수 없습니다",
+    });
   }
 }
 
-function validate(name, password) {
+function validateBcryptPassword(password) {
+  const BCRYPT_REGEX = /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/;
+  if (typeof password !== "string") {
+    throw new BadRequestError({
+      path: "hash password",
+      message: "Invalid password string format",
+    });
+  }
+  if (!BCRYPT_REGEX.test(password)) {
+    throw new BadRequestError({
+      path: "hash password",
+      message: "Invalid password hash format",
+    });
+  }
+}
+
+function validateId(id) {
+  if (typeof id !== "string") {
+    throw new BadRequestError({
+      path: "id",
+      message: `Invalid id type ${typeof id}`,
+    });
+  }
+}
+function validateUserId(userId) {
+  if (typeof userId !== "string") {
+    throw new BadRequestError({
+      path: "userId",
+      message: `Invalid id type ${typeof userId}`,
+    });
+  }
+}
+function validateGroupId(groupId) {
+  if (typeof groupId !== "string") {
+    throw new BadRequestError({
+      path: "groupId",
+      message: `Invalid id type ${typeof groupId}`,
+    });
+  }
+}
+function validateCreatedAt(createdAt) {
+  if (!(createdAt instanceof Date) || Number.isNaN(createdAt.getTime())) {
+    throw new BadRequestError({
+      path: "createdAt",
+      message: `Invalid createdAt ${createdAt.toString()}`,
+    });
+  }
+}
+function validateUpdatedAt(updatedAt) {
+  if (!(updatedAt instanceof Date) || Number.isNaN(updatedAt.getTime())) {
+    throw new BadRequestError({
+      path: "updatedAt",
+      message: `Invalid updatedAt ${updatedAt.toString()}`,
+    });
+  }
+}
+
+function validateUnregistedUser({ name, password }) {
   validateName(name);
   validatePassword(password);
 }
 
+function validateUser({
+  name,
+  password,
+  id,
+  group_id,
+  created_at,
+  updated_at,
+}) {
+  validateName(name);
+  validateBcryptPassword(password);
+  validateId(id);
+  validateGroupId(group_id);
+  validateCreatedAt(created_at);
+  validateUpdatedAt(updated_at);
+}
+
+function validateUserInOner({
+  id,
+  nickName,
+  userId,
+  groupId,
+  createdAt,
+  updatedAt,
+}) {
+  validateId(id);
+  validateName(nickName);
+  validateUserId(userId);
+  validateGroupId(groupId);
+  validateCreatedAt(createdAt);
+  validateUpdatedAt(updatedAt);
+}
+
 //user
 export class User {
-  constructor(id, name, password, groupId, createdAt, updatedAt) {
+  constructor({ id, name, password, groupId, createdAt, updatedAt }) {
     this.id = id;
     this.name = name;
     this.password = password;
@@ -65,20 +173,14 @@ export class User {
       created_at,
       updated_at,
     };
+    validateUser(info);
 
-    return new User(
-      info.id,
-      info.name,
-      info.password,
-      info.group_id,
-      info.created_at,
-      info.updated_at
-    );
+    return new User(info);
   }
 }
 
 export class UnregisteredUser {
-  constructor(name, password, groupId) {
+  constructor({ name, password, groupId }) {
     this.name = name;
     this.password = password;
     this.groupId = groupId;
@@ -90,15 +192,15 @@ export class UnregisteredUser {
       password,
       groupId,
     };
-    validate(info.name, info.password);
+    validateUnregistedUser({ name: info.name, password: info.password });
 
-    return new UnregisteredUser(info.name, info.password, info.groupId);
+    return new UnregisteredUser(info);
   }
 }
 
 //owner
 export class UserInOwner {
-  constructor(id, nickName, userId, groupId, createdAt, updatedAt) {
+  constructor({ id, nickName, userId, groupId, createdAt, updatedAt }) {
     this.id = id;
     this.nickName = nickName;
     this.userId = userId;
@@ -116,15 +218,9 @@ export class UserInOwner {
       createdAt,
       updatedAt,
     };
+    validateUserInOner(info);
 
-    return new UserInOwner(
-      info.id,
-      info.nickName,
-      info.userId,
-      info.groupId,
-      info.createdAt,
-      info.updatedAt
-    );
+    return new UserInOwner(info);
   }
 }
 
@@ -154,29 +250,29 @@ export class Group {
     this.updatedAt = updatedAt;
   }
 
-  static create(
+  static create({
     id,
     name,
     tags,
-    goalReps,
+    goal_reps,
     image,
-    discordWebUrl,
-    discordServerUrl,
-    likeCount,
-    createdAt,
-    updatedAt
-  ) {
+    discord_web_url,
+    discord_server_url,
+    like_count,
+    created_at,
+    updated_at,
+  }) {
     return new Group(
       id.toString(),
       name,
       tags,
-      goalReps,
+      goal_reps,
       image,
-      discordWebUrl,
-      discordServerUrl,
-      likeCount,
-      createdAt,
-      updatedAt
+      discord_web_url,
+      discord_server_url,
+      like_count,
+      created_at,
+      updated_at
     );
   }
 }

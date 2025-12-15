@@ -155,18 +155,7 @@ async function getGroup(groupId) {
     },
   });
 
-  const groupRes = Group.create(
-    groupData.id,
-    groupData.name,
-    groupData.tags,
-    groupData.goal_reps,
-    groupData.image,
-    groupData.discord_web_url,
-    groupData.discord_server_url,
-    groupData.like_count,
-    groupData.created_at,
-    groupData.updated_at
-  );
+  const groupRes = Group.create(groupData);
 
   return groupRes;
 }
