@@ -1,10 +1,6 @@
 import { prisma } from "../../../prisma/prisma.js";
 import bcrypt from "bcrypt";
-import {
-  UnregisteredUser,
-  User,
-  UserInOwner,
-} from "../../entities/user/user.js";
+import { UnregisteredUser, User, UserInOwner } from "../../entities/user.js";
 import {
   ConflictError,
   UnauthorizedError,
