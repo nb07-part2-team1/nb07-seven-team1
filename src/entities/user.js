@@ -1,4 +1,4 @@
-import { BadRequestError } from "../../errors/customError.js";
+import { BadRequestError } from "../errors/customError.js";
 
 const validateName = (name) => {
   const nameRegex = /^[a-z0-9가-힣]+$/;
