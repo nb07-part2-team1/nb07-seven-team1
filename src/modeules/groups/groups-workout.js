@@ -1,7 +1,7 @@
 //../modeules/groups/groups-workout.js
 
-import { WorkoutRecord } from "./groups-workout-record.model.js";
-import { prisma } from "../../../prisma/prisma.js";
+import { WorkoutRecord } from "../../entities/groups-workout-record.entity.js";
+import prisma from "../../../prisma/prisma.js";
 import { NotFoundError, UnauthorizedError } from "../../errors/customError.js";
 
 // 기록 생성

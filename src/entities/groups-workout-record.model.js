@@ -4,7 +4,7 @@ export class WorkoutRecord {
   constructor(
     id,
     nickname,
-    workoutType,
+    exerciseType,
     description,
     time,
     distance,
@@ -13,7 +13,7 @@ export class WorkoutRecord {
   ) {
     this.id = id;
     this.nickname = nickname;
-    this.workoutType = workoutType;
+    this.exerciseType = exerciseType;
     this.description = description;
     this.time = time;
     this.distance = distance;
@@ -25,7 +25,7 @@ export class WorkoutRecord {
     const info = {
       id: entity.id.toString(),
       nickname: entity.user.name,
-      workoutType: entity.category,
+      exerciseType: entity.category,
       description: entity.description,
       time: entity.time,
       distance: entity.distance,
@@ -36,7 +36,7 @@ export class WorkoutRecord {
     return new WorkoutRecord(
       info.id,
       info.nickname,
-      info.workoutType,
+      info.exerciseType,
       info.description,
       info.time,
       info.distance,
