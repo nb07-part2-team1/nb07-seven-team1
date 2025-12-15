@@ -1,4 +1,4 @@
-//../modeules/groups/groups-workout-record.model.js
+//../modeules/groups/groups-workout-record.entity.js
 
 export class WorkoutRecord {
   constructor(
