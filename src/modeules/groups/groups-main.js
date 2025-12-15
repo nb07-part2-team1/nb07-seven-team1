@@ -9,8 +9,7 @@
 //클래스 사용, 유효성 검사,  완료 스키마 변경요청 .. 안된다면 내꺼 변경 가능성 높은것들 주석표시
 //헬퍼js 사용시 api test 잘나오느것 확인
 //다시 entity 짜고 main 에 적용 확인 완료 ! ㅎasdasdasdasdasdasd
-import pkg from "@prisma/client";
-const { PrismaClient } = pkg;
+
 import { prisma } from "../../../prisma/prisma.js";
 
 export const createGroup = async (req, res, next) => {

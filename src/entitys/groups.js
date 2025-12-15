@@ -83,7 +83,7 @@ export class Group {
     this.created_at = data.created_at;
   }
 
-  static formEntity({
+  static formEntity(
     id,
     name,
     description,
@@ -93,9 +93,8 @@ export class Group {
     discordWebUrl,
     discordServerUrl,
     likeCount,
-    created_at,
-  }) {
-    // 스타일변환
+    created_at
+  ) {
     const info = {
       id,
       name,
