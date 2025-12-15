@@ -1,6 +1,6 @@
 import { BadRequestError } from "../../errors/customError.js";
 
-function validateName(name) {
+const validateName = (name) => {
   const nameRegex = /^[a-z0-9가-힣]+$/;
 
   if (!name || name.trim().length === 0) {
@@ -27,9 +27,9 @@ function validateName(name) {
       message: "닉네임은 한글, 영문, 숫자만 사용 가능합니다",
     });
   }
-}
+};
 
-function validatePassword(password) {
+const validatePassword = (password) => {
   const regex =
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]:;"'<>,.?/]).{8,20}$/;
 
@@ -57,9 +57,9 @@ function validatePassword(password) {
       message: "비밀번호에 공백은 넣을 수 없습니다",
     });
   }
-}
+};
 
-function validateBcryptPassword(password) {
+const validateBcryptPassword = (password) => {
   const BCRYPT_REGEX = /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/;
   if (typeof password !== "string") {
     throw new BadRequestError({
@@ -73,85 +73,85 @@ function validateBcryptPassword(password) {
       message: "Invalid password hash format",
     });
   }
-}
+};
 
-function validateId(id) {
+const validateId = (id) => {
   if (typeof id !== "string") {
     throw new BadRequestError({
       path: "id",
       message: `Invalid id type ${typeof id}`,
     });
   }
-}
-function validateUserId(userId) {
+};
+const validateUserId = (userId) => {
   if (typeof userId !== "string") {
     throw new BadRequestError({
       path: "userId",
       message: `Invalid id type ${typeof userId}`,
     });
   }
-}
-function validateGroupId(groupId) {
+};
+const validateGroupId = (groupId) => {
   if (typeof groupId !== "string") {
     throw new BadRequestError({
       path: "groupId",
       message: `Invalid id type ${typeof groupId}`,
     });
   }
-}
-function validateCreatedAt(createdAt) {
+};
+const validateCreatedAt = (createdAt) => {
   if (!(createdAt instanceof Date) || Number.isNaN(createdAt.getTime())) {
     throw new BadRequestError({
       path: "createdAt",
       message: `Invalid createdAt ${createdAt.toString()}`,
     });
   }
-}
-function validateUpdatedAt(updatedAt) {
+};
+const validateUpdatedAt = (updatedAt) => {
   if (!(updatedAt instanceof Date) || Number.isNaN(updatedAt.getTime())) {
     throw new BadRequestError({
       path: "updatedAt",
       message: `Invalid updatedAt ${updatedAt.toString()}`,
     });
   }
-}
+};
 
-function validateUnregistedUser({ name, password }) {
+const validateUnregistedUser = ({ name, password }) => {
   validateName(name);
   validatePassword(password);
-}
+};
 
-function validateUser({
+const validateUser = ({
   name,
   password,
   id,
   group_id,
   created_at,
   updated_at,
-}) {
+}) => {
   validateName(name);
   validateBcryptPassword(password);
   validateId(id);
   validateGroupId(group_id);
   validateCreatedAt(created_at);
   validateUpdatedAt(updated_at);
-}
+};
 
-function validateUserInOner({
+const validateUserInOner = ({
   id,
   nickName,
   userId,
   groupId,
   createdAt,
   updatedAt,
-}) {
+}) => {
   validateId(id);
   validateName(nickName);
   validateUserId(userId);
   validateGroupId(groupId);
   validateCreatedAt(createdAt);
   validateUpdatedAt(updatedAt);
-}
+};
 
 //user
 export class User {
@@ -221,58 +221,5 @@ export class UserInOwner {
     validateUserInOner(info);
 
     return new UserInOwner(info);
-  }
-}
-
-//user group instance 용도
-export class Group {
-  constructor(
-    id,
-    name,
-    tags,
-    goalReps,
-    image,
-    discordWebUrl,
-    discordServerUrl,
-    likeCount,
-    createdAt,
-    updatedAt
-  ) {
-    this.id = id;
-    this.name = name;
-    this.tags = tags;
-    this.goalReps = goalReps;
-    this.image = image;
-    this.discordWebUrl = discordWebUrl;
-    this.discordServerUrl = discordServerUrl;
-    this.likeCount = likeCount;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
-
-  static create({
-    id,
-    name,
-    tags,
-    goal_reps,
-    image,
-    discord_web_url,
-    discord_server_url,
-    like_count,
-    created_at,
-    updated_at,
-  }) {
-    return new Group(
-      id.toString(),
-      name,
-      tags,
-      goal_reps,
-      image,
-      discord_web_url,
-      discord_server_url,
-      like_count,
-      created_at,
-      updated_at
-    );
   }
 }

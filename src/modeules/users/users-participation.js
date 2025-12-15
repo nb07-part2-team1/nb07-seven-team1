@@ -4,7 +4,6 @@ import {
   UnregisteredUser,
   User,
   UserInOwner,
-  Group,
 } from "../../entities/user/user.js";
 import {
   ConflictError,
@@ -12,48 +11,10 @@ import {
   NotFoundError,
 } from "../../errors/customError.js";
 
-export const createUser = async (req, res, next) => {
-  try {
-    const { nickname, password } = req.body;
-    const { groupId } = req.params;
-
-    const resUserData = await createUserInGroup({
-      nickname,
-      password,
-      groupId,
-    });
-    const resGroupData = await getGroup(groupId);
-    const resOwnerData = await getOwner(groupId);
-
-    const resData = userResponse(resUserData, resGroupData, resOwnerData);
-
-    res.status(201).json(resData);
-  } catch (e) {
-    next(e);
-  }
-};
-
-export const deleteUser = async (req, res, next) => {
-  try {
-    const { nickname, password } = req.body;
-    const { groupId } = req.params;
-
-    await deleteUserInGroup({
-      nickname,
-      password,
-      groupId,
-    });
-
-    res.json({ message: "그룹 참여를 취소하였습니다" });
-  } catch (e) {
-    next(e);
-  }
-};
-
 /**
  * user create function
  */
-async function createUserInGroup({ nickname, password, groupId }) {
+const createUserInGroup = async ({ nickname, password, groupId }) => {
   const unregUser = UnregisteredUser.create({
     name: nickname.toLowerCase(),
     password,
@@ -71,9 +32,9 @@ async function createUserInGroup({ nickname, password, groupId }) {
   const user = User.create(createUser);
 
   return user;
-}
+};
 
-async function nameToCheck(name, groupId) {
+const nameToCheck = async (name, groupId) => {
   const user = await prisma.user.findFirst({
     where: {
       name: name,
@@ -85,17 +46,17 @@ async function nameToCheck(name, groupId) {
   }
 
   return;
-}
+};
 
-async function hashPassword(password) {
+const hashPassword = async (password) => {
   const saltRounds = 10;
   return await bcrypt.hash(password, saltRounds);
-}
+};
 
 /**
  * user delete function
  */
-async function deleteUserInGroup({ nickname, password, groupId }) {
+const deleteUserInGroup = async ({ nickname, password, groupId }) => {
   const unregUser = UnregisteredUser.create({
     name: nickname,
     password,
@@ -112,9 +73,9 @@ async function deleteUserInGroup({ nickname, password, groupId }) {
       id: getUser.id,
     },
   });
-}
+};
 
-async function findUser(name, password, groupId) {
+const findUser = async (name, password, groupId) => {
   const findUser = await prisma.user.findFirst({
     where: {
       name,
@@ -138,29 +99,17 @@ async function findUser(name, password, groupId) {
   }
 
   return findUser;
-}
+};
 
-async function verifyPassword(inputPassword, hashedPassword) {
+const verifyPassword = async (inputPassword, hashedPassword) => {
   return await bcrypt.compare(inputPassword, hashedPassword);
-}
+};
 
 /**
- * group, owner function
+ * owner function
  * reponse data GET
  */
-async function getGroup(groupId) {
-  const groupData = await prisma.group.findFirst({
-    where: {
-      id: Number(groupId),
-    },
-  });
-
-  const groupRes = Group.create(groupData);
-
-  return groupRes;
-}
-
-async function getOwner(groupId) {
+const getOwner = async (groupId) => {
   const ownerData = await prisma.owner.findFirst({
     where: {
       group_id: Number(groupId),
@@ -184,36 +133,82 @@ async function getOwner(groupId) {
   });
 
   return owner;
-}
+};
 
 //mapper
-function userResponse(resUserData, resGroupData, resOwnerData) {
-  return {
-    id: resGroupData.id,
-    name: resGroupData.name,
-    description: "string", //스키마에 description 추가해야 함
-    photoUrl: resGroupData.image,
-    goalRep: resGroupData.goalReps,
-    discordWebhookUrl: resGroupData.discordWebUrl,
-    discordInviteUrl: resGroupData.discordServerUrl,
-    likeCount: resGroupData.likeCount,
-    tags: resGroupData.tags,
-    owner: {
-      id: resOwnerData.id,
-      nickname: resOwnerData.nickName,
-      createdAt: resOwnerData.createdAt,
-      updatedAt: resOwnerData.updatedAt,
-    },
-    participants: [
-      {
-        id: resUserData.id,
-        nickname: resUserData.name,
-        createdAt: resUserData.createdAt,
-        updatedAt: resUserData.updatedAt,
-      },
-    ],
-    createdAt: resGroupData.createdAt,
-    updatedAt: resGroupData.updatedAt,
-    badges: ["string"],
-  };
-}
+const userResponse = (resUserData, resGroupData, resOwnerData, resBadge) => {
+  return { id: 99999, name: "99999" };
+  // return {
+  //   id: resGroupData.id,
+  //   name: resGroupData.name,
+  //   description: resGroupData.description,
+  //   photoUrl: resGroupData.image,
+  //   goalRep: resGroupData.goalReps,
+  //   discordWebhookUrl: resGroupData.discordWebUrl,
+  //   discordInviteUrl: resGroupData.discordServerUrl,
+  //   likeCount: resGroupData.likeCount,
+  //   tags: resGroupData.tags,
+  //   owner: {
+  //     id: resOwnerData.id,
+  //     nickname: resOwnerData.nickName,
+  //     createdAt: resOwnerData.createdAt,
+  //     updatedAt: resOwnerData.updatedAt,
+  //   },
+  //   participants: [
+  //     {
+  //       id: resUserData.id,
+  //       nickname: resUserData.name,
+  //       createdAt: resUserData.createdAt,
+  //       updatedAt: resUserData.updatedAt,
+  //     },
+  //   ],
+  //   createdAt: resGroupData.createdAt,
+  //   updatedAt: resGroupData.updatedAt,
+  //   badges: resBadge.content,
+  // };
+};
+
+/**
+ * createUser(그룹 참가)
+ * deleteUser(그룹 참가 취소)
+ */
+export const createUser = async (req, res, next) => {
+  try {
+    const { nickname, password } = req.body;
+    const { groupId } = req.params;
+
+    //need response data *user, group, owner, badge*
+    const resUserData = await createUserInGroup({
+      nickname,
+      password,
+      groupId,
+    });
+    // const resGroupData = await getGroup(groupId);
+    // const resOwnerData = await getOwner(groupId);
+    // const resBadge = await getbadge(groupId);
+
+    // const resData = userResponse(resUserData, resGroupData, resOwnerData);
+    const resData = userResponse({});
+
+    res.status(201).json(resData);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const deleteUser = async (req, res, next) => {
+  try {
+    const { nickname, password } = req.body;
+    const { groupId } = req.params;
+
+    await deleteUserInGroup({
+      nickname,
+      password,
+      groupId,
+    });
+
+    res.json({ message: "그룹 참여를 취소하였습니다" });
+  } catch (e) {
+    next(e);
+  }
+};
