@@ -53,11 +53,9 @@ model WorkoutLog {
   category    String
   description String
   time        DateTime
-  distance    Int
-  duration_seconds Int? 
+  distance    Int 
   images      String[]
   created_at         DateTime @default(now()) @db.Timestamptz(6)
-  
   user_id BigInt
   user    User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 

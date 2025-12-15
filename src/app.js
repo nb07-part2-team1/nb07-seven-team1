@@ -17,9 +17,14 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
 
   if (err instanceof HttpError) {
-    return res.status(err.statusCode).json({
-      message: err.message,
-    });
+    const response = { message: err.message };
+
+    // path 있을 때만 추가
+    if (err.path !== undefined) {
+      response.path = err.path;
+    }
+
+    return res.status(err.statusCode).json(response);
   }
 });
 
