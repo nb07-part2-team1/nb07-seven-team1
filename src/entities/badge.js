@@ -1,11 +1,11 @@
-import { BadRequestError } from "../errors/customError";
+import { BadRequestError } from "../errors/customError.js";
 
 export class Badge {
-  constructor(data) {
-    this.id = data.id;
-    this.content = data.content;
-    this.createdAt = data.createdAt;
-    this.groupId = data.groupId;
+  constructor({ id, content, createdAt, groupId }) {
+    this.id = id;
+    this.content = content;
+    this.createdAt = createdAt;
+    this.groupId = groupId;
   }
 
   static formEntity({ id, content, created_at, group_id }) {
@@ -16,29 +16,29 @@ export class Badge {
       groupId: parseInt(group_id),
     };
 
-    if (typeof content !== "string") {
-      new BadRequestError("content타입이 문자열이 아님");
-    }
+    // if (typeof content !== "string") {
+    //   new BadRequestError("content타입이 문자열이 아님");
+    // }
 
     return new Badge(info);
   }
 }
 
 export class UnregistereBadge {
-  constructor(content, group_id) {
+  constructor({ content, group_id }) {
     this.content = content;
     this.group_id = group_id;
   }
 
-  static fromInfo({ content, groupId }) {
+  static formInfo({ content, groupId }) {
     const info = {
       content,
-      group_id: groupId,
+      group_id: BigInt(groupId),
     };
 
-    if (typeof content !== "string") {
-      new BadRequestError("content 문자열이 아님");
-    }
+    // if (typeof content !== "string") {
+    //   new BadRequestError("content 문자열이 아님");
+    // }
 
     return new UnregistereBadge(info);
   }
