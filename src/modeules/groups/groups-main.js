@@ -76,6 +76,7 @@ export const getGroup = async (req, res, next) => {
     const formattedData = groups.map((group) => {
       return new entityGroup(group).toResponse();
     });
+
     res.status(200).send({
       currentPage: Number(page),
       totalPages: Math.ceil(total / Number(pageSize)),
@@ -117,7 +118,6 @@ export const patchGroup = async (req, res, next) => {
     const rawData = await prisma.group.findUnique({
       where: { id: Number(groupId) },
     });
-
     if (!rawData) throw new NotFoundError("존재하지않는 그룹.");
 
     const groupEntity = new entityGroup(rawData);
@@ -133,7 +133,6 @@ export const patchGroup = async (req, res, next) => {
     });
 
     const updatedEntity = new entityGroup(updatedGroup);
-
     res.status(200).send(updatedEntity.toResponse());
   } catch (error) {
     next(error);
