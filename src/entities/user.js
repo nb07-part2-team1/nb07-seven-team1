@@ -59,25 +59,6 @@ const validatePassword = (password) => {
   }
 };
 
-<<<<<<< Updated upstream
-const validateBcryptPassword = (password) => {
-  const BCRYPT_REGEX = /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/;
-  if (typeof password !== "string") {
-    throw new BadRequestError({
-      path: "hash password",
-      message: "Invalid password string format",
-    });
-  }
-  if (!BCRYPT_REGEX.test(password)) {
-    throw new BadRequestError({
-      path: "hash password",
-      message: "Invalid password hash format",
-    });
-  }
-};
-
-=======
->>>>>>> Stashed changes
 const validateId = (id) => {
   if (typeof id !== "string") {
     throw new BadRequestError({
@@ -125,19 +106,19 @@ const validateUnregistedUser = ({ name, password }) => {
 };
 
 const validateUser = ({
-  name,
+  nickname,
   password,
   id,
-  group_id,
-  created_at,
-  updated_at,
+  groupId,
+  createdAt,
+  updatedAt,
 }) => {
-  validateName(name);
+  validateName(nickname);
   validateBcryptPassword(password);
   validateId(id);
-  validateGroupId(group_id);
-  validateCreatedAt(created_at);
-  validateUpdatedAt(updated_at);
+  validateGroupId(groupId);
+  validateCreatedAt(createdAt);
+  validateUpdatedAt(updatedAt);
 };
 
 const validateUserInOner = ({
@@ -158,31 +139,14 @@ const validateUserInOner = ({
 
 //user
 export class User {
-<<<<<<< Updated upstream
-  constructor({ id, name, password, groupId, createdAt, updatedAt }) {
-    this.id = id;
-    this.name = name;
-    this.password = password;
-=======
   constructor({ id, nickname, groupId, createdAt, updatedAt }) {
     this.id = id;
     this.nickname = nickname;
->>>>>>> Stashed changes
     this.groupId = groupId;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
 
-<<<<<<< Updated upstream
-  static create({ id, name, password, group_id, created_at, updated_at }) {
-    const info = {
-      id: id.toString(),
-      name,
-      password,
-      group_id: group_id.toString(),
-      created_at,
-      updated_at,
-=======
   static formEntity({ id, name, group_id, created_at, updated_at }) {
     const info = {
       id: parseInt(id),
@@ -190,55 +154,28 @@ export class User {
       groupId: parseInt(group_id),
       createdAt: created_at,
       updatedAt: updated_at,
->>>>>>> Stashed changes
     };
-    validateUser(info);
+    // validateUser(info);
 
     return new User(info);
   }
 }
 
 export class UnregisteredUser {
-  constructor({ name, password, groupId }) {
+  constructor({ name, password, group_id }) {
     this.name = name;
     this.password = password;
-    this.groupId = groupId;
+    this.group_id = group_id;
   }
 
-  static create({ name, password, groupId }) {
+  static formInfo({ name, password, groupId }) {
     const info = {
       name,
       password,
-      groupId,
+      group_id: BigInt(groupId),
     };
-    validateUnregistedUser({ name: info.name, password: info.password });
+    // validateUnregistedUser({ name: info.name, password: info.password });
 
     return new UnregisteredUser(info);
-  }
-}
-
-//owner
-export class UserInOwner {
-  constructor({ id, nickName, userId, groupId, createdAt, updatedAt }) {
-    this.id = id;
-    this.nickName = nickName;
-    this.userId = userId;
-    this.groupId = groupId;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
-
-  static create({ id, nickName, userId, groupId, createdAt, updatedAt }) {
-    const info = {
-      id: id.toString(),
-      nickName,
-      userId: userId.toString(),
-      groupId: groupId.toString(),
-      createdAt,
-      updatedAt,
-    };
-    validateUserInOner(info);
-
-    return new UserInOwner(info);
   }
 }

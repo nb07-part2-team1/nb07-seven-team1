@@ -1,61 +1,39 @@
 import { BadRequestError } from "../errors/customError";
 
 export class WorkoutRecord {
-  constructor(
-    id,
-    nickname,
-    exerciseType,
-    description,
-    time,
-    distance,
-    images,
-    createdAt
-  ) {
+  constructor({ id, exerciseType, description, time, distance, photos }) {
     this.id = id;
-    this.nickname = nickname;
     this.exerciseType = exerciseType;
     this.description = description;
     this.time = time;
     this.distance = distance;
-    this.images = images;
-    this.createdAt = createdAt;
+    this.photos = photos;
   }
 
-  static fromEntity(entity) {
-    if (
-      !entity ||
-      !entity.id ||
-      !entity.user ||
-      !entity.category ||
-      !entity.user.name
-    ) {
-      throw new Error(
-        "DB 엔티티 변환 중 필수 필드 또는 사용자 관계 정보가 누락되었습니다."
-      );
-    }
+  static formEntity(entity) {
+    // if (
+    //   !entity ||
+    //   !entity.id ||
+    //   !entity.user ||
+    //   !entity.category ||
+    //   !entity.user.name
+    // ) {
+    //   throw new Error(
+    //     "DB 엔티티 변환 중 필수 필드 또는 사용자 관계 정보가 누락되었습니다."
+    //   );
+    // }
 
     const info = {
-      id: entity.id.toString(),
-      nickname: entity.user.name,
+      id: parseInt(entity.id),
       exerciseType: entity.category,
       description: entity.description,
       time: entity.time,
       distance: entity.distance,
-      images: entity.images || [],
-      createdAt: entity.created_at,
+      photos: entity.images || [],
     };
 
-    if (typeof nickname !== "string")
-      return new WorkoutRecord(
-        info.id,
-        info.nickname,
-        info.exerciseType,
-        info.description,
-        info.time,
-        info.distance,
-        info.images,
-        info.createdAt
-      );
+    // if (typeof nickname !== "string")
+    return new WorkoutRecord(info);
   }
 }
 
@@ -69,47 +47,47 @@ export class UnregistereWorkoutRecord {
   }
 
   static formInfo({ exerciseType, description, time, distance, photos }) {
-    // 타입 검증
-    if (
-      !exerciseType ||
-      typeof exerciseType !== "string" ||
-      exerciseType.trim().length === 0
-    ) {
-      throw new BadRequestError(
-        "운동 종류(exerciseType)는 필수이며 공백이 아닌 문자열이어야 합니다."
-      );
-    }
-    // 설명 검증
-    if (description !== undefined && typeof description !== "string") {
-      throw new BadRequestError("설명(description)은 문자열이어야 합니다.");
-    }
-    if (!time) {
-      throw new BadRequestError("시간(time)은 필수 입력값입니다.");
-    }
+    // // 타입 검증
+    // if (
+    //   !exerciseType ||
+    //   typeof exerciseType !== "string" ||
+    //   exerciseType.trim().length === 0
+    // ) {
+    //   throw new BadRequestError(
+    //     "운동 종류(exerciseType)는 필수이며 공백이 아닌 문자열이어야 합니다."
+    //   );
+    // }
+    // // 설명 검증
+    // if (description !== undefined && typeof description !== "string") {
+    //   throw new BadRequestError("설명(description)은 문자열이어야 합니다.");
+    // }
+    // if (!time) {
+    //   throw new BadRequestError("시간(time)은 필수 입력값입니다.");
+    // }
 
-    // 시간 유효성 검증
-    const timeObject = new Date(time);
-    if (isNaN(timeObject.getTime())) {
-      throw new BadRequestError("유효하지 않은 시간(time) 형식입니다.");
-    }
+    // // 시간 유효성 검증
+    // const timeObject = new Date(time);
+    // if (isNaN(timeObject.getTime())) {
+    //   throw new BadRequestError("유효하지 않은 시간(time) 형식입니다.");
+    // }
 
-    // 거리 검증
-    if (distance !== undefined && distance !== null) {
-      if (typeof distance !== "number" || distance < 0) {
-        throw new BadRequestError(
-          "거리(distance)는 0 이상의 숫자 형식이어야 합니다."
-        );
-      }
-    }
-    // images 배열 검증
-    if (photos !== undefined && photos !== null && !Array.isArray(photos)) {
-      throw new BadRequestError("사진(photos)은 배열 형태여야 합니다.");
-    }
+    // // 거리 검증
+    // if (distance !== undefined && distance !== null) {
+    //   if (typeof distance !== "number" || distance < 0) {
+    //     throw new BadRequestError(
+    //       "거리(distance)는 0 이상의 숫자 형식이어야 합니다."
+    //     );
+    //   }
+    // }
+    // // images 배열 검증
+    // if (photos !== undefined && photos !== null && !Array.isArray(photos)) {
+    //   throw new BadRequestError("사진(photos)은 배열 형태여야 합니다.");
+    // }
 
     const info = {
       catagory: exerciseType,
       description: description || "",
-      time: timeObject,
+      time,
       distance: distance || 0,
       images: photos || [],
     };
