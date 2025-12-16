@@ -59,6 +59,7 @@ const validatePassword = (password) => {
   }
 };
 
+<<<<<<< Updated upstream
 const validateBcryptPassword = (password) => {
   const BCRYPT_REGEX = /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/;
   if (typeof password !== "string") {
@@ -75,6 +76,8 @@ const validateBcryptPassword = (password) => {
   }
 };
 
+=======
+>>>>>>> Stashed changes
 const validateId = (id) => {
   if (typeof id !== "string") {
     throw new BadRequestError({
@@ -155,15 +158,22 @@ const validateUserInOner = ({
 
 //user
 export class User {
+<<<<<<< Updated upstream
   constructor({ id, name, password, groupId, createdAt, updatedAt }) {
     this.id = id;
     this.name = name;
     this.password = password;
+=======
+  constructor({ id, nickname, groupId, createdAt, updatedAt }) {
+    this.id = id;
+    this.nickname = nickname;
+>>>>>>> Stashed changes
     this.groupId = groupId;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
 
+<<<<<<< Updated upstream
   static create({ id, name, password, group_id, created_at, updated_at }) {
     const info = {
       id: id.toString(),
@@ -172,6 +182,15 @@ export class User {
       group_id: group_id.toString(),
       created_at,
       updated_at,
+=======
+  static formEntity({ id, name, group_id, created_at, updated_at }) {
+    const info = {
+      id: parseInt(id),
+      nickname: name,
+      groupId: parseInt(group_id),
+      createdAt: created_at,
+      updatedAt: updated_at,
+>>>>>>> Stashed changes
     };
     validateUser(info);
 
