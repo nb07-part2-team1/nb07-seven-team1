@@ -1,5 +1,5 @@
-import { prisma } from "../../prisma/prisma.js";
-import { badgeContent, badgeThreshold } from "../../constants/badge.js";
+import { prisma } from "../../../prisma/prisma.js";
+import { BADGE_CONTENT, BADGE_THRESHOLD } from "../../constants/badge.js";
 
 const ensureBadge = async (groupIdBigInt, content) => {
   const exists = await prisma.badge.findFirst({
