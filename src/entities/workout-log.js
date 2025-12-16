@@ -1,4 +1,4 @@
-import { BadRequestError } from "../errors/customError";
+import { BadRequestError } from "../errors/customError.js";
 
 export class WorkoutRecord {
   constructor(
@@ -29,7 +29,7 @@ export class WorkoutRecord {
       !entity.category ||
       !entity.user.name
     ) {
-      throw new Error(
+      throw BadRequestError(
         "DB 엔티티 변환 중 필수 필드 또는 사용자 관계 정보가 누락되었습니다."
       );
     }
@@ -59,7 +59,7 @@ export class WorkoutRecord {
   }
 }
 
-export class UnregistereWorkoutRecord {
+export class UnregisteredWorkoutRecord {
   constructor({ catagory, description, time, distance, images }) {
     this.catagory = catagory;
     this.description = description;
@@ -114,8 +114,6 @@ export class UnregistereWorkoutRecord {
       images: photos || [],
     };
 
-    // 검증로직
-
-    return new UnregistereWorkoutRecord(info);
+    return new UnregisteredWorkoutRecord(info);
   }
 }

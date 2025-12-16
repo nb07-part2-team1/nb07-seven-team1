@@ -65,7 +65,6 @@ model WorkoutLog {
 
   @@map("workout_log")
 }
-
 model Badge {
   id         BigInt   @id @default(autoincrement())
   content    String
