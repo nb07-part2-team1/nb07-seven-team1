@@ -1,4 +1,3 @@
-import { BadRequestError } from "../errors/customError.js";
 import {
   validateRequired,
   validateWhitespace,
