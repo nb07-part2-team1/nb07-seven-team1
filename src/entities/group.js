@@ -40,17 +40,30 @@ export class UnregistereGroup {
 }
 
 export class Group {
-  constructor(data) {
-    this.id = data.id;
-    this.name = data.name;
-    this.description = data.description;
-    this.tags = data.tags;
-    this.goalRep = data.goalRep;
-    this.photoUrl = data.photoUrl;
-    this.discordWebUrl = data.discordWebUrl;
-    this.discordServerUrl = data.discordServerUrl;
-    this.likeCount = data.likeCount;
-    this.createdAt = data.createdAt;
+  constructor({
+    id,
+    name,
+    description,
+    photoUrl,
+    tags,
+    goalRep,
+    discordWebhookUrl,
+    discordInviteUrl,
+    likeCount,
+    createdAt,
+    updatedAt,
+  }) {
+    this.id = id;
+    this.name = name;
+    this.description = description;
+    this.photoUrl = photoUrl;
+    this.tags = tags;
+    this.goalRep = goalRep;
+    this.discordWebhookUrl = discordWebhookUrl;
+    this.discordInviteUrl = discordInviteUrl;
+    this.likeCount = likeCount;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   static formEntity({
@@ -64,18 +77,20 @@ export class Group {
     discord_server_url,
     like_count,
     created_at,
+    updated_at,
   }) {
     const info = {
-      id,
+      id: parseInt(id),
       name,
       description,
       tags,
       goalRep: goal_reps,
       photoUrl: image,
-      discordWebUrl: discord_web_url,
-      discordServerUrl: discord_server_url,
+      discordWebhookUrl: discord_web_url,
+      discordInviteUrl: discord_server_url,
       likeCount: like_count,
       createdAt: created_at,
+      updatedAt: updated_at,
     };
 
     return new Group(info);
