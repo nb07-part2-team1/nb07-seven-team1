@@ -2,6 +2,9 @@ import { BadRequestError } from "../errors/customError.js";
 import {
   validateRequired,
   validateWhitespace,
+  validateDate,
+  validateInt,
+  validateString,
 } from "../utils/validators.common.js";
 import {
   validateLength,
@@ -9,103 +12,66 @@ import {
   validatePasswordRegex,
 } from "../utils/validators.user.js";
 
-const validateName = (name) => {
+//UnregistedUser 검증
+const validateUnregisteredUserName = (name) => {
   const validateInfo = { value: name, path: "nickname" };
-
   validateRequired(validateInfo);
   validateWhitespace(validateInfo);
-  validateLength({ ...validateInfo, minLength: 3, kMaxLength: 10 });
+  validateLength({ ...validateInfo, minLength: 3, MaxLength: 10 });
   validateNameRegex(validateInfo);
 };
-
-const validatePassword = (password) => {
+const validateUnregisteredUserPassword = (password) => {
   const validateInfo = { value: password, path: "password" };
-
   validateRequired(validateInfo);
   validateWhitespace(validateInfo);
-  validateLength({ ...validateInfo, minLength: 8, kMaxLength: 20 });
+  validateLength({ ...validateInfo, minLength: 8, MaxLength: 20 });
   validatePasswordRegex(validateInfo);
 };
-
-const validateId = (id) => {
-  if (typeof id !== "string") {
-    throw new BadRequestError({
-      path: "id",
-      message: `Invalid id type ${typeof id}`,
-    });
-  }
+const validateUnregisteredUserGroupId = (groupId) => {
+  const validateInfo = { value: groupId, path: "groupId" };
+  validateRequired(validateInfo);
 };
-const validateUserId = (userId) => {
-  if (typeof userId !== "string") {
-    throw new BadRequestError({
-      path: "userId",
-      message: `Invalid id type ${typeof userId}`,
-    });
-  }
-};
-const validateGroupId = (groupId) => {
-  if (typeof groupId !== "string") {
-    throw new BadRequestError({
-      path: "groupId",
-      message: `Invalid id type ${typeof groupId}`,
-    });
-  }
-};
-const validateCreatedAt = (createdAt) => {
-  if (!(createdAt instanceof Date) || Number.isNaN(createdAt.getTime())) {
-    throw new BadRequestError({
-      path: "createdAt",
-      message: `Invalid createdAt ${createdAt.toString()}`,
-    });
-  }
-};
-const validateUpdatedAt = (updatedAt) => {
-  if (!(updatedAt instanceof Date) || Number.isNaN(updatedAt.getTime())) {
-    throw new BadRequestError({
-      path: "updatedAt",
-      message: `Invalid updatedAt ${updatedAt.toString()}`,
-    });
-  }
+const validateUnregisteredUser = ({ name, password, groupId }) => {
+  validateUnregisteredUserName(name);
+  validateUnregisteredUserPassword(password);
+  validateUnregisteredUserGroupId(groupId);
 };
 
-const validateUnregistedUser = ({ name, password }) => {
-  validateName(name);
-  validatePassword(password);
+//User 검증
+const validateUserId = (id) => {
+  const validateInfo = { value: id, path: "id" };
+  validateRequired(validateInfo);
+  validateInt(validateInfo);
+};
+const validateUserUserId = (userId) => {
+  const validateInfo = { value: userId, path: "userId" };
+  validateRequired(validateInfo);
+  validateString(validateInfo);
+};
+const validateUserGroupId = (groupId) => {
+  const validateInfo = { value: groupId, path: "groupId" };
+  validateRequired(validateInfo);
+  validateInt(validateInfo);
+};
+const validateUserCreatedAt = (createdAt) => {
+  const validateInfo = { value: createdAt, path: "createdAt" };
+  validateRequired(validateInfo);
+  validateDate(validateInfo);
+};
+const validateUserUpdatedAt = (updatedAt) => {
+  const validateInfo = { value: updatedAt, path: "updatedAt" };
+  validateRequired(validateInfo);
+  validateDate(validateInfo);
 };
 
-const validateUser = ({
-  nickname,
-  password,
-  id,
-  groupId,
-  createdAt,
-  updatedAt,
-}) => {
-  validateName(nickname);
-  validateBcryptPassword(password);
-  validateId(id);
-  validateGroupId(groupId);
-  validateCreatedAt(createdAt);
-  validateUpdatedAt(updatedAt);
+const validateUser = ({ id, nickname, groupId, createdAt, updatedAt }) => {
+  validateUserId(id);
+  validateUserUserId(nickname);
+  validateUserGroupId(groupId);
+  validateUserCreatedAt(createdAt);
+  validateUserUpdatedAt(updatedAt);
 };
 
-const validateUserInOner = ({
-  id,
-  nickName,
-  userId,
-  groupId,
-  createdAt,
-  updatedAt,
-}) => {
-  validateId(id);
-  validateName(nickName);
-  validateUserId(userId);
-  validateGroupId(groupId);
-  validateCreatedAt(createdAt);
-  validateUpdatedAt(updatedAt);
-};
-
-//user
 export class User {
   constructor({ id, nickname, groupId, createdAt, updatedAt }) {
     this.id = id;
@@ -142,7 +108,11 @@ export class UnregisteredUser {
       password,
       group_id: BigInt(groupId),
     };
-    // validateUnregistedUser({ name: info.name, password: info.password });
+    // validateUnregisteredUser({
+    //   name: info.name,
+    //   password: info.password,
+    //   groupId: info.group_id,
+    // });
 
     return new UnregisteredUser(info);
   }
