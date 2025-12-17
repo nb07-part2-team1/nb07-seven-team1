@@ -20,6 +20,26 @@ export const validateWhitespace = ({ value, path }) => {
   }
 };
 
+//값(value) array(배열) 체크
+export const validateArray = ({ value, path }) => {
+  if (!Array.isArray(value)) {
+    throw new BadRequestError({
+      path,
+      message: `${path}은(는) 배열 형식이어야 합니다`,
+    });
+  }
+};
+
+//값(value) string type 체크
+export const validateString = ({ value, path }) => {
+  if (typeof value !== "string") {
+    throw new BadRequestError({
+      path,
+      message: `Invalid type ${typeof value}`,
+    });
+  }
+};
+
 //값(value) Data type 체크
 export const validateDate = ({ value, path }) => {
   if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
@@ -57,16 +77,6 @@ export const validatePositiveInteger = ({ value, path }) => {
     throw new BadRequestError({
       path,
       message: "1보다 작거나 소수는 사용할 수 없습니다",
-    });
-  }
-};
-
-//값(value) string type 체크
-export const validateString = ({ value, path }) => {
-  if (typeof value !== "string") {
-    throw new BadRequestError({
-      path,
-      message: `Invalid type ${typeof value}`,
     });
   }
 };
@@ -117,3 +127,51 @@ export const validateUrl = ({ value, path }) => {
     });
   }
 };
+
+//값(value) time 형식 체크
+export const validateTime = ({ value, path }) => {
+  const time = new Date(value);
+  if (Number.isNaN(time.getTime())) {
+    throw new BadRequestError({
+      path,
+      message: "유요하지 않은 시간(time) 형식입니다",
+    });
+  }
+};
+
+// // 타입 검증
+// if (
+//   !exerciseType ||
+//   typeof exerciseType !== "string" ||
+//   exerciseType.trim().length === 0
+// ) {
+//   throw new BadRequestError(
+//     "운동 종류(exerciseType)는 필수이며 공백이 아닌 문자열이어야 합니다."
+//   );
+// }
+// 설명 검증
+// if (description !== undefined && typeof description !== "string") {
+//   throw new BadRequestError("설명(description)은 문자열이어야 합니다.");
+// }
+// if (!time) {
+//   throw new BadRequestError("시간(time)은 필수 입력값입니다.");
+// }
+
+// // 시간 유효성 검증
+// const timeObject = new Date(time);
+// if (isNaN(timeObject.getTime())) {
+//   throw new BadRequestError("유효하지 않은 시간(time) 형식입니다.");
+// }
+
+// // 거리 검증
+// if (distance !== undefined && distance !== null) {
+//   if (typeof distance !== "number" || distance < 0) {
+//     throw new BadRequestError(
+//       "거리(distance)는 0 이상의 숫자 형식이어야 합니다."
+//     );
+//   }
+// }
+// // images 배열 검증
+// if (photos !== undefined && photos !== null && !Array.isArray(photos)) {
+//   throw new BadRequestError("사진(photos)은 배열 형태여야 합니다.");
+// }

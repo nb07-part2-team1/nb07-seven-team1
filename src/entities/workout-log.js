@@ -1,4 +1,86 @@
-import { BadRequestError } from "../errors/customError";
+import {
+  validateRequired,
+  validatePositiveInteger,
+  validateString,
+  validateTime,
+  validateArray,
+} from "../utils/validators.common";
+
+//WorkoutRecord 검증
+const validateWorkoutRecordExerciseType = (exerciseType) => {
+  const validateInfo = { value: exerciseType, path: "exerciseType" };
+  validateRequired(validateInfo);
+};
+const validateWorkoutRecordDescription = (description) => {
+  const validateInfo = { value: description, path: "description" };
+  validateRequired(validateInfo);
+};
+const validateWorkoutRecordTime = (time) => {
+  const validateInfo = { value: time, path: "time" };
+  validateRequired(validateInfo);
+};
+const validateWorkoutRecordDistance = (distance) => {
+  const validateInfo = { value: distance, path: "distance" };
+  validateRequired(validateInfo);
+  validatePositiveInteger(validateInfo);
+};
+const validateWorkoutRecordPhotos = (photos) => {
+  const validateInfo = { value: photos, path: "photos" };
+  validateArray(validateInfo);
+};
+const validateWorkoutRecord = ({
+  exerciseType,
+  description,
+  time,
+  distance,
+  photos,
+}) => {
+  validateWorkoutRecordExerciseType(exerciseType);
+  validateWorkoutRecordDescription(description);
+  validateWorkoutRecordTime(time);
+  validateWorkoutRecordDistance(distance);
+  validateWorkoutRecordPhotos(photos);
+};
+
+//UnregisteredWorkoutRecord 검증
+const validateUnregisteredWorkoutRecordExerciseType = (exerciseType) => {
+  const validateInfo = { value: exerciseType, path: "exerciseType" };
+  validateRequired(validateInfo);
+  validateWhitespace(validateInfo);
+  validateString(validateInfo);
+};
+const validateUnregisteredWorkoutRecordDescription = (description) => {
+  const validateInfo = { value: description, path: "description" };
+  validateRequired(validateInfo);
+  validateString(validateInfo);
+};
+const validateUnregisteredWorkoutRecordTime = (time) => {
+  const validateInfo = { value: time, path: "time" };
+  validateRequired(validateInfo);
+  validateTime(validateInfo);
+};
+const validateUnregisteredWorkoutRecordDistance = (distance) => {
+  const validateInfo = { value: distance, path: "distance" };
+  validateRequired(validateInfo);
+  validatePositiveInteger(validateInfo);
+};
+const validateUnregisteredWorkoutRecordImages = (images) => {
+  const validateInfo = { value: images, path: "images" };
+  validateArray(validateInfo);
+};
+const validateUnregisteredWorkoutRecord = ({
+  exerciseType,
+  description,
+  time,
+  distance,
+  images,
+}) => {
+  validateUnregisteredWorkoutRecordExerciseType(exerciseType);
+  validateUnregisteredWorkoutRecordDescription(description);
+  validateUnregisteredWorkoutRecordTime(time);
+  validateUnregisteredWorkoutRecordDistance(distance);
+  validateUnregisteredWorkoutRecordImages(images);
+};
 
 export class WorkoutRecord {
   constructor({ id, exerciseType, description, time, distance, photos }) {
@@ -11,18 +93,6 @@ export class WorkoutRecord {
   }
 
   static formEntity(entity) {
-    // if (
-    //   !entity ||
-    //   !entity.id ||
-    //   !entity.user ||
-    //   !entity.category ||
-    //   !entity.user.name
-    // ) {
-    //   throw new Error(
-    //     "DB 엔티티 변환 중 필수 필드 또는 사용자 관계 정보가 누락되었습니다."
-    //   );
-    // }
-
     const info = {
       id: parseInt(entity.id),
       exerciseType: entity.category,
@@ -32,7 +102,9 @@ export class WorkoutRecord {
       photos: entity.images || [],
     };
 
-    // if (typeof nickname !== "string")
+    //검증 로직
+    //validateWorkoutRecord(info);
+
     return new WorkoutRecord(info);
   }
 }
@@ -47,43 +119,6 @@ export class UnregistereWorkoutRecord {
   }
 
   static formInfo({ exerciseType, description, time, distance, photos }) {
-    // // 타입 검증
-    // if (
-    //   !exerciseType ||
-    //   typeof exerciseType !== "string" ||
-    //   exerciseType.trim().length === 0
-    // ) {
-    //   throw new BadRequestError(
-    //     "운동 종류(exerciseType)는 필수이며 공백이 아닌 문자열이어야 합니다."
-    //   );
-    // }
-    // // 설명 검증
-    // if (description !== undefined && typeof description !== "string") {
-    //   throw new BadRequestError("설명(description)은 문자열이어야 합니다.");
-    // }
-    // if (!time) {
-    //   throw new BadRequestError("시간(time)은 필수 입력값입니다.");
-    // }
-
-    // // 시간 유효성 검증
-    // const timeObject = new Date(time);
-    // if (isNaN(timeObject.getTime())) {
-    //   throw new BadRequestError("유효하지 않은 시간(time) 형식입니다.");
-    // }
-
-    // // 거리 검증
-    // if (distance !== undefined && distance !== null) {
-    //   if (typeof distance !== "number" || distance < 0) {
-    //     throw new BadRequestError(
-    //       "거리(distance)는 0 이상의 숫자 형식이어야 합니다."
-    //     );
-    //   }
-    // }
-    // // images 배열 검증
-    // if (photos !== undefined && photos !== null && !Array.isArray(photos)) {
-    //   throw new BadRequestError("사진(photos)은 배열 형태여야 합니다.");
-    // }
-
     const info = {
       catagory: exerciseType,
       description: description || "",
@@ -93,6 +128,7 @@ export class UnregistereWorkoutRecord {
     };
 
     // 검증로직
+    //validateUnregisteredWorkoutRecord(info);
 
     return new UnregistereWorkoutRecord(info);
   }
