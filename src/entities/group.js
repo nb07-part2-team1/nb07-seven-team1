@@ -14,9 +14,7 @@ import { validateNameRegex } from "../utils/validators.user.js";
 const validateUnregisteredGroupName = (name) => {
   const validateInfo = { value: name, path: "name" };
   validateRequired(validateInfo);
-  validateWhitespace(validateInfo);
-  validateLength({ ...validateInfo, minLength: 3, maxLength: 10 });
-  validateNameRegex(validateInfo);
+  validateLength({ ...validateInfo, minLength: 3, maxLength: 15 });
 };
 const validateUnregisteredGroupDescription = (description) => {
   const validateInfo = { value: description, path: "description" };
