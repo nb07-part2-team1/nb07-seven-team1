@@ -22,7 +22,7 @@ const validateUnregisteredUserPassword = (password) => {
   const validateInfo = { value: password, path: "password" };
   validateRequired(validateInfo);
   validateWhitespace(validateInfo);
-  validateLength({ ...validateInfo, minLength: 8, MaxLength: 20 });
+  validateLength({ ...validateInfo, minLength: 8, maxLength: 20 });
   validatePasswordRegex(validateInfo);
 };
 const validateUnregisteredUserGroupId = (groupId) => {
