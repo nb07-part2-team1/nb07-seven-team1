@@ -6,13 +6,11 @@ import {
   validatePositiveInteger,
   validateDate,
   validateLength,
-} from "../utils/validators.common";
+  validateUrl,
+} from "../utils/validators.common.js";
+import { validateNameRegex } from "../utils/validators.user.js";
 
 //UnregisteredGroup 검증
-const validateUnregisteredGroupId = (id) => {
-  const validateInfo = { value: id, path: "id" };
-  validateRequired(validateInfo);
-};
 const validateUnregisteredGroupName = (name) => {
   const validateInfo = { value: name, path: "name" };
   validateRequired(validateInfo);
@@ -24,7 +22,7 @@ const validateUnregisteredGroupDescription = (description) => {
   const validateInfo = { value: description, path: "description" };
   validateRequired(validateInfo);
   validateString(validateInfo);
-  validateLength({ ...validateInfo, minLength: 1, maxLength: 50 });
+  validateLength({ ...validateInfo, minLength: 3, maxLength: 50 });
 };
 const validateUnregisteredGroupPhotoUrl = (photoUrl) => {
   const validateInfo = { value: photoUrl, path: "photoUrl" };
@@ -38,7 +36,7 @@ const validateUnregisteredGroupGoalReps = (goalReps) => {
   validateRequired(validateInfo);
   validatePositiveInteger(validateInfo);
 };
-const validateUnregisteredGroupDiscordWebUrl = () => {
+const validateUnregisteredGroupDiscordWebUrl = (discordWebhookUrl) => {
   const validateInfo = { value: discordWebhookUrl, path: "discordWebhookUrl" };
   validateRequired(validateInfo);
   validateUrl(validateInfo);
@@ -49,7 +47,6 @@ const validateUnregisteredGroupDiscordServerUrl = (discordInviteUrl) => {
   validateUrl(validateInfo);
 };
 const validateUnregisteredGroup = ({
-  id,
   name,
   description,
   image,
@@ -58,7 +55,6 @@ const validateUnregisteredGroup = ({
   discord_web_url,
   discord_server_url,
 }) => {
-  validateUnregisteredGroupId(id);
   validateUnregisteredGroupName(name);
   validateUnregisteredGroupDescription(description);
   validateUnregisteredGroupPhotoUrl(image);
@@ -177,7 +173,7 @@ export class UnregistereGroup {
       discord_web_url: discordWebhookUrl,
       discord_server_url: discordInviteUrl,
     };
-    // validateUnregisteredGroup(info);
+    validateUnregisteredGroup(info);
 
     return new UnregistereGroup(info);
   }
@@ -236,7 +232,7 @@ export class Group {
       createdAt: created_at,
       updatedAt: updated_at,
     };
-    // validateGroup(info);
+    validateGroup(info);
 
     return new Group(info);
   }
