@@ -2,7 +2,6 @@ import {
   validateRequired,
   validateWhitespace,
   validateDate,
-  validateInt,
   validateString,
   validateLength,
 } from "../utils/validators.common.js";
