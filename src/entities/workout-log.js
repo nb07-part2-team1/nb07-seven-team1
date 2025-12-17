@@ -4,12 +4,29 @@ import {
   validateString,
   validateTime,
   validateArray,
-} from "../utils/validators.common";
+  validateWhitespace,
+} from "../utils/validators.common.js";
+
+import { validateExerciseType } from "../utils/validators.workout.js";
 
 //WorkoutRecord 검증
+const validateWorkoutRecord = ({
+  exerciseType,
+  description,
+  time,
+  distance,
+  photos,
+}) => {
+  validateWorkoutRecordExerciseType(exerciseType);
+  validateWorkoutRecordDescription(description);
+  validateWorkoutRecordTime(time);
+  validateWorkoutRecordDistance(distance);
+  validateWorkoutRecordPhotos(photos);
+};
 const validateWorkoutRecordExerciseType = (exerciseType) => {
   const validateInfo = { value: exerciseType, path: "exerciseType" };
   validateRequired(validateInfo);
+  validateExerciseType(validateInfo);
 };
 const validateWorkoutRecordDescription = (description) => {
   const validateInfo = { value: description, path: "description" };
@@ -28,26 +45,27 @@ const validateWorkoutRecordPhotos = (photos) => {
   const validateInfo = { value: photos, path: "photos" };
   validateArray(validateInfo);
 };
-const validateWorkoutRecord = ({
-  exerciseType,
+
+//UnregisteredWorkoutRecord 검증
+const validateUnregisteredWorkoutRecord = ({
+  catagory,
   description,
   time,
   distance,
-  photos,
+  images,
 }) => {
-  validateWorkoutRecordExerciseType(exerciseType);
-  validateWorkoutRecordDescription(description);
-  validateWorkoutRecordTime(time);
-  validateWorkoutRecordDistance(distance);
-  validateWorkoutRecordPhotos(photos);
+  validateUnregisteredWorkoutRecordExerciseType(catagory);
+  validateUnregisteredWorkoutRecordDescription(description);
+  validateUnregisteredWorkoutRecordTime(time);
+  validateUnregisteredWorkoutRecordDistance(distance);
+  validateUnregisteredWorkoutRecordImages(images);
 };
-
-//UnregisteredWorkoutRecord 검증
 const validateUnregisteredWorkoutRecordExerciseType = (exerciseType) => {
   const validateInfo = { value: exerciseType, path: "exerciseType" };
   validateRequired(validateInfo);
   validateWhitespace(validateInfo);
   validateString(validateInfo);
+  validateExerciseType(validateInfo);
 };
 const validateUnregisteredWorkoutRecordDescription = (description) => {
   const validateInfo = { value: description, path: "description" };
@@ -67,19 +85,6 @@ const validateUnregisteredWorkoutRecordDistance = (distance) => {
 const validateUnregisteredWorkoutRecordImages = (images) => {
   const validateInfo = { value: images, path: "images" };
   validateArray(validateInfo);
-};
-const validateUnregisteredWorkoutRecord = ({
-  exerciseType,
-  description,
-  time,
-  distance,
-  images,
-}) => {
-  validateUnregisteredWorkoutRecordExerciseType(exerciseType);
-  validateUnregisteredWorkoutRecordDescription(description);
-  validateUnregisteredWorkoutRecordTime(time);
-  validateUnregisteredWorkoutRecordDistance(distance);
-  validateUnregisteredWorkoutRecordImages(images);
 };
 
 export class WorkoutRecord {
@@ -103,7 +108,7 @@ export class WorkoutRecord {
     };
 
     //검증 로직
-    //validateWorkoutRecord(info);
+    validateWorkoutRecord(info);
 
     return new WorkoutRecord(info);
   }
@@ -128,7 +133,7 @@ export class UnregistereWorkoutRecord {
     };
 
     // 검증로직
-    //validateUnregisteredWorkoutRecord(info);
+    validateUnregisteredWorkoutRecord(info);
 
     return new UnregistereWorkoutRecord(info);
   }
