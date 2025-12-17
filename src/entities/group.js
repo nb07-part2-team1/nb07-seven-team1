@@ -29,8 +29,11 @@ const validateUnregisteredGroupPhotoUrl = (photoUrl) => {
   const validateInfo = { value: photoUrl, path: "photoUrl" };
   validatePhotoUrl(validateInfo);
 };
-const validateUnregisteredGroupGoalRep = (goalRep) => {
-  const validateInfo = { value: goalRep, path: "goalRep" };
+const validateUnregisteredGroupTags = (tags) => {
+  const validateInfo = { value: tags, path: "tags" };
+};
+const validateUnregisteredGroupGoalReps = (goalReps) => {
+  const validateInfo = { value: goalReps, path: "goalReps" };
   validateRequired(validateInfo);
   validatePositiveInteger(validateInfo);
 };
@@ -49,7 +52,8 @@ const validateUnregisteredGroup = ({
   name,
   description,
   image,
-  goal_rep,
+  tags,
+  goal_reps,
   discord_web_url,
   discord_server_url,
 }) => {
@@ -57,7 +61,8 @@ const validateUnregisteredGroup = ({
   validateUnregisteredGroupName(name);
   validateUnregisteredGroupDescription(description);
   validateUnregisteredGroupPhotoUrl(image);
-  validateUnregisteredGroupGoalRep(goal_rep);
+  validateUnregisteredGroupTags(tags);
+  validateUnregisteredGroupGoalReps(goal_reps);
   validateUnregisteredGroupDiscordWebUrl(discord_web_url);
   validateUnregisteredGroupDiscordServerUrl(discord_server_url);
 };
@@ -83,8 +88,8 @@ const validateGroupPhotoUrl = (photoUrl) => {
 const validateGroupTags = (tags) => {
   const validateInfo = { value: tags, path: "tags" };
 };
-const validateGroupGoalRep = (goalRep) => {
-  const validateInfo = { value: goalRep, path: "goalRep" };
+const validateGroupGoalReps = (goalReps) => {
+  const validateInfo = { value: goalReps, path: "goalReps" };
   validateRequired(validateInfo);
 };
 const validateGroupDiscordWebUrl = (discordWebhookUrl) => {
@@ -128,7 +133,7 @@ const validateGroup = ({
   validateGroupDescription(description);
   validateGroupPhotoUrl(photoUrl);
   validateGroupTags(tags);
-  validateGroupGoalRep(goalRep);
+  validateGroupGoalReps(goalRep);
   validateGroupDiscordWebUrl(discordWebhookUrl);
   validateGroupDiscordServerUrl(discordInviteUrl);
   validateGroupLikeCount(likeCount);
