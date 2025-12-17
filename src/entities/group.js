@@ -172,6 +172,7 @@ export class UnregistereGroup {
       discord_web_url: discordWebhookUrl,
       discord_server_url: discordInviteUrl,
     };
+    // validateUnregisteredGroup(info);
 
     return new UnregistereGroup(info);
   }
@@ -230,6 +231,7 @@ export class Group {
       createdAt: created_at,
       updatedAt: updated_at,
     };
+    // validateGroup(info);
 
     return new Group(info);
   }
