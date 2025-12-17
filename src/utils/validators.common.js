@@ -20,6 +20,24 @@ export const validateWhitespace = ({ value, path }) => {
   }
 };
 
+/**
+ * 값(value)의 길이 체크
+ * 길이 기본값  minLength = 3, maxLength = 10
+ */
+export const validateLength = ({
+  value,
+  path,
+  minLength = 3,
+  maxLength = 10,
+}) => {
+  if (value.length < minLength || value.length > maxLength) {
+    throw new BadRequestError({
+      path: `${path}`,
+      message: `${path}은(는) ${minLength} ~ ${maxLength}자로 작성해 주세요`,
+    });
+  }
+};
+
 //값(value) array(배열) 체크
 export const validateArray = ({ value, path }) => {
   if (!Array.isArray(value)) {
@@ -138,40 +156,3 @@ export const validateTime = ({ value, path }) => {
     });
   }
 };
-
-// // 타입 검증
-// if (
-//   !exerciseType ||
-//   typeof exerciseType !== "string" ||
-//   exerciseType.trim().length === 0
-// ) {
-//   throw new BadRequestError(
-//     "운동 종류(exerciseType)는 필수이며 공백이 아닌 문자열이어야 합니다."
-//   );
-// }
-// 설명 검증
-// if (description !== undefined && typeof description !== "string") {
-//   throw new BadRequestError("설명(description)은 문자열이어야 합니다.");
-// }
-// if (!time) {
-//   throw new BadRequestError("시간(time)은 필수 입력값입니다.");
-// }
-
-// // 시간 유효성 검증
-// const timeObject = new Date(time);
-// if (isNaN(timeObject.getTime())) {
-//   throw new BadRequestError("유효하지 않은 시간(time) 형식입니다.");
-// }
-
-// // 거리 검증
-// if (distance !== undefined && distance !== null) {
-//   if (typeof distance !== "number" || distance < 0) {
-//     throw new BadRequestError(
-//       "거리(distance)는 0 이상의 숫자 형식이어야 합니다."
-//     );
-//   }
-// }
-// // images 배열 검증
-// if (photos !== undefined && photos !== null && !Array.isArray(photos)) {
-//   throw new BadRequestError("사진(photos)은 배열 형태여야 합니다.");
-// }

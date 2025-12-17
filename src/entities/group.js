@@ -5,6 +5,7 @@ import {
   validatePhotoUrl,
   validatePositiveInteger,
   validateDate,
+  validateLength,
 } from "../utils/validators.common";
 
 //UnregisteredGroup 검증

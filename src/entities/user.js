@@ -4,9 +4,9 @@ import {
   validateDate,
   validateInt,
   validateString,
+  validateLength,
 } from "../utils/validators.common.js";
 import {
-  validateLength,
   validateNameRegex,
   validatePasswordRegex,
 } from "../utils/validators.user.js";
