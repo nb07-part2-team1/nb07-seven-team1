@@ -138,19 +138,17 @@ const validateGroup = ({
 
 export class UnregistereGroup {
   constructor({
-    id,
     name,
     description,
     image,
-    goal_rep,
+    goal_reps,
     discord_web_url,
     discord_server_url,
   }) {
-    this.id = id;
     this.name = name;
     this.description = description;
     this.image = image;
-    this.goal_rep = goal_rep;
+    this.goal_reps = goal_reps;
     this.discord_web_url = discord_web_url;
     this.discord_server_url = discord_server_url;
   }
@@ -160,6 +158,7 @@ export class UnregistereGroup {
     description,
     photoUrl,
     goalRep,
+    tags,
     discordWebhookUrl,
     discordInviteUrl,
   }) {
@@ -168,7 +167,7 @@ export class UnregistereGroup {
       description,
       tags,
       image: photoUrl,
-      goal_rep: goalRep,
+      goal_reps: goalRep,
       discord_web_url: discordWebhookUrl,
       discord_server_url: discordInviteUrl,
     };
