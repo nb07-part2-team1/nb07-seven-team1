@@ -106,6 +106,8 @@ export const validatePhotoUrl = ({ value, path }) => {
 
   //1.URL 형식 검사
   try {
+    if (value === undefined) return;
+
     url = new URL(value);
   } catch {
     throw new BadRequestError({
