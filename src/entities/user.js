@@ -59,22 +59,6 @@ const validatePassword = (password) => {
   }
 };
 
-const validateBcryptPassword = (password) => {
-  const BCRYPT_REGEX = /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/;
-  // if (typeof password !== "string") {
-  //   throw new BadRequestError({
-  //     path: "hash password",
-  //     message: "Invalid password string format",
-  //   });
-  // }
-  // if (!BCRYPT_REGEX.test(password)) {
-  //   throw new BadRequestError({
-  //     path: "hash password",
-  //     message: "Invalid password hash format",
-  //   });
-  // }
-};
-
 const validateId = (id) => {
   if (typeof id !== "string") {
     throw new BadRequestError({
@@ -155,20 +139,18 @@ const validateUserInOner = ({
 
 //user
 export class User {
-  constructor({ id, nickname, password, groupId, createdAt, updatedAt }) {
+  constructor({ id, nickname, groupId, createdAt, updatedAt }) {
     this.id = id;
     this.nickname = nickname;
-    this.password = password;
     this.groupId = groupId;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
 
-  static formEntity({ id, name, password, group_id, created_at, updated_at }) {
+  static formEntity({ id, name, group_id, created_at, updated_at }) {
     const info = {
       id: parseInt(id),
       nickname: name,
-      password,
       groupId: parseInt(group_id),
       createdAt: created_at,
       updatedAt: updated_at,
