@@ -1,8 +1,8 @@
 import {
   validateRequired,
-  validateString,
   validateDate,
-} from "../utils/validators.common";
+  validateArray,
+} from "../utils/validators.common.js";
 
 //Badge 검증
 const validateBadgeId = (id) => {
@@ -12,7 +12,7 @@ const validateBadgeId = (id) => {
 const validateBadgeContent = (content) => {
   const validateInfo = { value: content, path: "content" };
   validateRequired(validateInfo);
-  validateString(validateInfo);
+  validateArray(validateInfo);
 };
 const validateBadgeCreateAt = (createdAt) => {
   const validateInfo = { value: createdAt, path: "createdAt" };
@@ -38,10 +38,10 @@ const validateUnregisteredBadgeId = (groupId) => {
 const validateUnregisteredBadgeContent = (content) => {
   const validateInfo = { value: content, path: "content" };
   validateRequired(validateInfo);
-  validateString(validateInfo);
+  validateArray(validateInfo);
 };
-const validateUnregisteredBadge = ({ groupId, content }) => {
-  validateUnregisteredBadgeId(groupId);
+const validateUnregisteredBadge = ({ content, group_id }) => {
+  validateUnregisteredBadgeId(group_id);
   validateUnregisteredBadgeContent(content);
 };
 
@@ -61,7 +61,8 @@ export class Badge {
       groupId: parseInt(group_id),
     };
 
-    // validateBadge(info);
+    //검증 로직
+    validateBadge(info);
 
     return new Badge(info);
   }
@@ -79,10 +80,8 @@ export class UnregistereBadge {
       group_id: BigInt(groupId),
     };
 
-    // validateUnregisteredBadge({
-    //   groupId: info.group_id,
-    //   content: info.content,
-    // });
+    //검증 로직
+    validateUnregisteredBadge(info);
 
     return new UnregistereBadge(info);
   }
