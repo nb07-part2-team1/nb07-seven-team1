@@ -1,6 +1,5 @@
 export class UnregistereGroup {
   constructor({
-    id,
     name,
     description,
     image,
@@ -8,7 +7,6 @@ export class UnregistereGroup {
     discord_web_url,
     discord_server_url,
   }) {
-    this.id = id;
     this.name = name;
     this.description = description;
     this.image = image;
