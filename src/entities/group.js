@@ -1,3 +1,141 @@
+import {
+  validateRequired,
+  validateWhitespace,
+  validateString,
+  validatePhotoUrl,
+  validatePositiveInteger,
+  validateDate,
+} from "../utils/validators.common";
+
+//UnregisteredGroup 검증
+const validateUnregisteredGroupId = (id) => {
+  const validateInfo = { value: id, path: "id" };
+  validateRequired(validateInfo);
+};
+const validateUnregisteredGroupName = (name) => {
+  const validateInfo = { value: name, path: "name" };
+  validateRequired(validateInfo);
+  validateWhitespace(validateInfo);
+  validateLength({ ...validateInfo, minLength: 3, maxLength: 10 });
+  validateNameRegex(validateInfo);
+};
+const validateUnregisteredGroupDescription = (description) => {
+  const validateInfo = { value: description, path: "description" };
+  validateRequired(validateInfo);
+  validateString(validateInfo);
+  validateLength({ ...validateInfo, minLength: 1, maxLength: 50 });
+};
+const validateUnregisteredGroupPhotoUrl = (photoUrl) => {
+  const validateInfo = { value: photoUrl, path: "photoUrl" };
+  validatePhotoUrl(validateInfo);
+};
+const validateUnregisteredGroupGoalRep = (goalRep) => {
+  const validateInfo = { value: goalRep, path: "goalRep" };
+  validateRequired(validateInfo);
+  validatePositiveInteger(validateInfo);
+};
+const validateUnregisteredGroupDiscordWebUrl = () => {
+  const validateInfo = { value: discordWebhookUrl, path: "discordWebhookUrl" };
+  validateRequired(validateInfo);
+  validateUrl(validateInfo);
+};
+const validateUnregisteredGroupDiscordServerUrl = (discordInviteUrl) => {
+  const validateInfo = { value: discordInviteUrl, path: "discordInviteUrl" };
+  validateRequired(validateInfo);
+  validateUrl(validateInfo);
+};
+const validateUnregisteredGroup = ({
+  id,
+  name,
+  description,
+  image,
+  goal_rep,
+  discord_web_url,
+  discord_server_url,
+}) => {
+  validateUnregisteredGroupId(id);
+  validateUnregisteredGroupName(name);
+  validateUnregisteredGroupDescription(description);
+  validateUnregisteredGroupPhotoUrl(image);
+  validateUnregisteredGroupGoalRep(goal_rep);
+  validateUnregisteredGroupDiscordWebUrl(discord_web_url);
+  validateUnregisteredGroupDiscordServerUrl(discord_server_url);
+};
+
+//Group 검증
+const validateGroupId = (id) => {
+  const validateInfo = { value: id, path: "id" };
+  validateRequired(validateInfo);
+};
+const validateGroupName = (name) => {
+  const validateInfo = { value: name, path: "name" };
+  validateRequired(validateInfo);
+};
+const validateGroupDescription = (description) => {
+  const validateInfo = { value: description, path: "description" };
+  validateRequired(validateInfo);
+};
+const validateGroupPhotoUrl = (photoUrl) => {
+  const validateInfo = { value: photoUrl, path: "photoUrl" };
+  validateRequired(validateInfo);
+  validatePhotoUrl(validateInfo);
+};
+const validateGroupTags = (tags) => {
+  const validateInfo = { value: tags, path: "tags" };
+};
+const validateGroupGoalRep = (goalRep) => {
+  const validateInfo = { value: goalRep, path: "goalRep" };
+  validateRequired(validateInfo);
+};
+const validateGroupDiscordWebUrl = (discordWebhookUrl) => {
+  const validateInfo = { value: discordWebhookUrl, path: "discordWebhookUrl" };
+  validateRequired(validateInfo);
+  validateUrl(validateInfo);
+};
+const validateGroupDiscordServerUrl = (discordInviteUrl) => {
+  const validateInfo = { value: discordInviteUrl, path: "discordInviteUrl" };
+  validateRequired(validateInfo);
+  validateUrl(validateInfo);
+};
+const validateGroupLikeCount = (likeCount) => {
+  const validateInfo = { value: likeCount, path: "likeCount" };
+};
+const validateGroupCreateAt = (createdAt) => {
+  const validateInfo = { value: createdAt, path: "createdAt" };
+  validateRequired(validateInfo);
+  validateDate(validateInfo);
+};
+const validateGroupUpdateAt = (updatedAt) => {
+  const validateInfo = { value: updatedAt, path: "updatedAt" };
+  validateRequired(validateInfo);
+  validateDate(validateInfo);
+};
+const validateGroup = ({
+  id,
+  name,
+  description,
+  photoUrl,
+  tags,
+  goalRep,
+  discordWebhookUrl,
+  discordInviteUrl,
+  likeCount,
+  createdAt,
+  updatedAt,
+}) => {
+  validateGroupId(id);
+  validateGroupName(name);
+  validateGroupDescription(description);
+  validateGroupPhotoUrl(photoUrl);
+  validateGroupTags(tags);
+  validateGroupGoalRep(goalRep);
+  validateGroupDiscordWebUrl(discordWebhookUrl);
+  validateGroupDiscordServerUrl(discordInviteUrl);
+  validateGroupLikeCount(likeCount);
+  validateGroupCreateAt(createdAt);
+  validateGroupUpdateAt(updatedAt);
+};
+
 export class UnregistereGroup {
   constructor({
     id,
