@@ -3,14 +3,14 @@ export class UnregistereGroup {
     name,
     description,
     image,
-    goal_rep,
+    goal_reps,
     discord_web_url,
     discord_server_url,
   }) {
     this.name = name;
     this.description = description;
     this.image = image;
-    this.goal_rep = goal_rep;
+    this.goal_reps = goal_reps;
     this.discord_web_url = discord_web_url;
     this.discord_server_url = discord_server_url;
   }
@@ -29,7 +29,7 @@ export class UnregistereGroup {
       description,
       tags,
       image: photoUrl,
-      goal_rep: goalRep,
+      goal_reps: goalRep,
       discord_web_url: discordWebhookUrl,
       discord_server_url: discordInviteUrl,
     };
