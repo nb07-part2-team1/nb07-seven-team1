@@ -1,6 +1,6 @@
 //src / middlewares / workout.middleware.js;
 
-import { UnregisteredWorkoutRecord } from "../entities/workout-log.js";
+import { UnregistereWorkoutRecord } from "../entities/workout-log.js";
 import { BadRequestError } from "../errors/customError.js";
 
 export const validateWorkoutRecord = (req, res, next) => {
@@ -21,7 +21,7 @@ export const validateWorkoutRecord = (req, res, next) => {
       });
     }
 
-    UnregisteredWorkoutRecord.formInfo({
+    UnregistereWorkoutRecord.formInfo({
       exerciseType: workoutType,
       description,
       time,
