@@ -173,6 +173,8 @@ export class UnregistereGroup {
       discord_web_url: discordWebhookUrl,
       discord_server_url: discordInviteUrl,
     };
+
+    //검증 로직
     validateUnregisteredGroup(info);
 
     return new UnregistereGroup(info);
@@ -232,6 +234,8 @@ export class Group {
       createdAt: created_at,
       updatedAt: updated_at,
     };
+
+    //검증 로직
     validateGroup(info);
 
     return new Group(info);

@@ -88,7 +88,9 @@ export class User {
       createdAt: created_at,
       updatedAt: updated_at,
     };
-    // validateUser(info);
+
+    //검증 로직
+    validateUser(info);
 
     return new User(info);
   }
@@ -107,11 +109,13 @@ export class UnregisteredUser {
       password,
       group_id: BigInt(groupId),
     };
-    // validateUnregisteredUser({
-    //   name: info.name,
-    //   password: info.password,
-    //   groupId: info.group_id,
-    // });
+
+    //검증 로직
+    validateUnregisteredUser({
+      name: info.name,
+      password: info.password,
+      groupId: info.group_id,
+    });
 
     return new UnregisteredUser(info);
   }
