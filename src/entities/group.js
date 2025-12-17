@@ -22,6 +22,7 @@ export class UnregistereGroup {
     description,
     photoUrl,
     goalRep,
+    tags,
     discordWebhookUrl,
     discordInviteUrl,
   }) {
