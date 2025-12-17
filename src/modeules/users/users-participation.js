@@ -1,6 +1,6 @@
 import { prisma } from "../../../prisma/prisma.js";
 import bcrypt from "bcrypt";
-import { UnregisteredUser, User, UserInOwner } from "../../entities/user.js";
+import { UnregisteredUser, User } from "../../entities/user.js";
 import {
   ConflictError,
   UnauthorizedError,
@@ -101,38 +101,8 @@ const verifyPassword = async (inputPassword, hashedPassword) => {
   return await bcrypt.compare(inputPassword, hashedPassword);
 };
 
-/**
- * owner function
- * reponse data GET
- */
-const getOwner = async (groupId) => {
-  const ownerData = await prisma.owner.findFirst({
-    where: {
-      group_id: Number(groupId),
-    },
-  });
-
-  const ownerUserData = await prisma.user.findFirst({
-    where: {
-      id: ownerData.user_id,
-      group_id: Number(groupId),
-    },
-  });
-
-  const owner = UserInOwner.create({
-    id: ownerData.id,
-    nickName: ownerUserData.name,
-    userId: ownerUserData.id,
-    groupId: ownerUserData.group_id,
-    createdAt: ownerUserData.created_at,
-    updatedAt: ownerUserData.updated_at,
-  });
-
-  return owner;
-};
-
 //mapper
-const userResponse = (resUserData, resGroupData, resOwnerData, resBadge) => {
+const userResponse = (resUserData, resGroupData, resBadge) => {
   return { id: 99999, name: "99999" };
   // return {
   //   id: resGroupData.id,
@@ -180,7 +150,6 @@ export const createUser = async (req, res, next) => {
       groupId,
     });
     // const resGroupData = await getGroup(groupId);
-    // const resOwnerData = await getOwner(groupId);
     // const resBadge = await getbadge(groupId);
 
     // const resData = userResponse(resUserData, resGroupData, resOwnerData);
