@@ -182,3 +182,45 @@ export const validateUser = ({
   validateRequired(updatedAtInfo);
   validateDate(updatedAtInfo);
 };
+
+/**
+ * badge entity validate function
+ */
+export const validateUnregisteredBadge = ({ content, group_id }) => {
+  //value, path로 객체 파라미터 분리
+  const groupIdInfo = { value: group_id, path: "groupId" };
+  const contentInfo = { value: content, path: "content" };
+
+  //groupId 검증
+  validateRequired(groupIdInfo);
+
+  //content 검증
+  validateRequired(contentInfo);
+  validateArray(contentInfo);
+};
+
+export const validateBadge = ({ id, content, createdAt, groupId }) => {
+  //value, path로 객체 파라미터 분리
+  const idInfo = { value: id, path: "id" };
+  const contentInfo = { value: content, path: "content" };
+  const createdAtInfo = { value: createdAt, path: "createdAt" };
+  const groupIdInfo = { value: groupId, path: "groupId" };
+
+  //id 검증
+  validateRequired(idInfo);
+
+  //content 검증
+  validateRequired(contentInfo);
+  validateArray(contentInfo);
+
+  //createdAt 검증
+  validateRequired(createdAtInfo);
+  validateDate(createdAtInfo);
+
+  //groupId 검증
+  validateRequired(groupIdInfo);
+};
+
+/**
+ * badge entity validate function
+ */
