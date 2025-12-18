@@ -1,5 +1,5 @@
 import express from "express";
-import * as groupParticipantsController from "../../modules/groups/groups-participants.js";
+import * as groupParticipantsController from "../../modeules/groups/groups-participants.js";
 
 const router = express.Router();
 
@@ -7,6 +7,6 @@ const router = express.Router();
 router.post("/:groupId/participants", groupParticipantsController.joinGroup);
 
 // DELETE /groups/{groupId}/participants
-// router.delete("/:groupId/participants", groupParticipantsController.leaveGroup);
+router.delete("/:groupId/participants", groupParticipantsController.leaveGroup);
 
 export default router;
