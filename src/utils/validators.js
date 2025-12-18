@@ -7,8 +7,15 @@ import {
   validateDate,
   validateLength,
   validateUrl,
+  validateTime,
 } from "./validators.common.js";
 import { validateNameRegex, validatePasswordRegex } from "./validators.user.js";
+
+/**
+ * group, user, badge, workout-log 검증 로직
+ * 각 이름으로 검색하면
+ * 해당 검증 로직 확인 가능
+ */
 
 /**
  * group entity validate function
@@ -222,5 +229,72 @@ export const validateBadge = ({ id, content, createdAt, groupId }) => {
 };
 
 /**
- * badge entity validate function
+ * workout-log entity validate function
  */
+export const validateUnregisteredWorkoutRecord = ({
+  catagory,
+  description,
+  time,
+  distance,
+  images,
+}) => {
+  //value, path로 객체 파라미터 분리
+  const exerciseTypeInfo = { value: catagory, path: "exerciseType" };
+  const descriptionInfo = { value: description, path: "description" };
+  const timeInfo = { value: time, path: "time" };
+  const distanceInfo = { value: distance, path: "distance" };
+  const imagesInfo = { value: images, path: "images" };
+
+  //exerciseType 검증
+  validateRequired(exerciseTypeInfo);
+  validateWhitespace(exerciseTypeInfo);
+  validateString(exerciseTypeInfo);
+  validateExerciseType(exerciseTypeInfo);
+
+  //description 검증
+  validateRequired(descriptionInfo);
+  validateString(descriptionInfo);
+
+  //time 검증
+  validateRequired(timeInfo);
+  validateTime(timeInfo);
+
+  //distance 검증
+  validateRequired(distanceInfo);
+  validatePositiveInteger(distanceInfo);
+
+  //iamges 검증
+  validateArray(imagesInfo);
+};
+
+export const validateWorkoutRecord = ({
+  exerciseType,
+  description,
+  time,
+  distance,
+  photos,
+}) => {
+  //value, path로 객체 파라미터 분리
+  const exerciseTypeInfo = { value: exerciseType, path: "exerciseType" };
+  const descriptionInfo = { value: description, path: "description" };
+  const timeInfo = { value: time, path: "time" };
+  const distanceInfo = { value: distance, path: "distance" };
+  const photosInfo = { value: photos, path: "photos" };
+
+  //exerciseType 검증
+  validateRequired(validateInfo);
+  validateExerciseType(validateInfo);
+
+  //description 검증
+  validateRequired(validateInfo);
+
+  //time 검증
+  validateRequired(validateInfo);
+
+  //distance 검증
+  validateRequired(validateInfo);
+  validatePositiveInteger(validateInfo);
+
+  //photos 검증
+  validateArray(validateInfo);
+};

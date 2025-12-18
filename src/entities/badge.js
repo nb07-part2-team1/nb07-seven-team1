@@ -1,4 +1,7 @@
-import { validateUnregisteredBadge, validateBadge } from "../utils/validators";
+import {
+  validateUnregisteredBadge,
+  validateBadge,
+} from "../utils/validators.js";
 
 export class Badge {
   constructor({ id, content, createdAt, groupId }) {

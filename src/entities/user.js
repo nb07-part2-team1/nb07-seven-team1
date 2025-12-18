@@ -1,4 +1,4 @@
-import { validateUser, validateUnregisteredUser } from "../utils/validators";
+import { validateUser, validateUnregisteredUser } from "../utils/validators.js";
 
 export class User {
   constructor({ id, nickname, groupId, createdAt, updatedAt }) {
