@@ -1,7 +1,7 @@
 export const BADGE_CONTENT = {
-  PARTICIPATION_10: "참여자 10명 이상",
-  LIKE_100: "추천수 100 이상",
-  RECORD_100: "운동 기록 100개 이상",
+  PARTICIPATION_10: "PARTICIPATION_10",
+  LIKE_100: "LIKE_100",
+  RECORD_100: "RECORD_100",
 };
 
 export const BADGE_THRESHOLD = {
