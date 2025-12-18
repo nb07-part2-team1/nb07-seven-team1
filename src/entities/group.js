@@ -12,7 +12,7 @@ import { validateNameRegex } from "../utils/validators.user.js";
 
 //UnregisteredGroup 검증
 const validateUnregisteredGroupName = (name) => {
-  const validateInfo = { value: name, path: "name" };
+  const validateInfo = { value: name, path: "그룹명" };
   validateRequired(validateInfo);
   validateLength({ ...validateInfo, minLength: 3, maxLength: 15 });
 };
