@@ -7,8 +7,8 @@ import {
   validateDate,
   validateLength,
   validateUrl,
-} from "../utils/validators.common.js";
-import { validateNameRegex } from "./validators.user.js";
+} from "./validators.common.js";
+import { validateNameRegex, validatePasswordRegex } from "./validators.user.js";
 
 /**
  * group entity validate function
@@ -61,7 +61,7 @@ export const validateUnregisteredGroup = ({
   validateUrl(discordInviteUrlInfo);
 };
 
-const validateGroup = ({
+export const validateGroup = ({
   id,
   name,
   description,
@@ -124,5 +124,61 @@ const validateGroup = ({
 };
 
 /**
- *
+ * user entity validate function
  */
+export const validateUnregisteredUser = ({ name, password, groupId }) => {
+  //value, path로 객체 파라미터 분리
+  const nicknameInfo = { value: name, path: "닉네임" };
+  const passwordInfo = { value: password, path: "password" };
+  const groupIdInfo = { value: groupId, path: "groupId" };
+
+  //nickname 검증
+  validateRequired(nicknameInfo);
+  validateWhitespace(nicknameInfo);
+  validateLength({ ...nicknameInfo, minLength: 3, MaxLength: 10 });
+  validateNameRegex(nicknameInfo);
+
+  //password 검증
+  validateRequired(passwordInfo);
+  validateWhitespace(passwordInfo);
+  validateLength({ ...passwordInfo, minLength: 8, maxLength: 20 });
+  validatePasswordRegex(passwordInfo);
+
+  //groupId 검증
+  validateRequired(groupIdInfo);
+};
+
+export const validateUser = ({
+  id,
+  nickname,
+  groupId,
+  createdAt,
+  updatedAt,
+}) => {
+  //value, path로 객체 파라미터 분리
+  const idInfo = { value: id, path: "id" };
+  const nicknameInfo = { value: nickname, path: "닉네임" };
+  const groupIdInfo = { value: groupId, path: "groupId" };
+  const createdAtInfo = { value: createdAt, path: "createdAt" };
+  const updatedAtInfo = { value: updatedAt, path: "updatedAt" };
+
+  //id 검증
+  validateRequired(idInfo);
+  validateInt(idInfo);
+
+  //nickname 검증
+  validateRequired(nicknameInfo);
+  validateString(nicknameInfo);
+
+  //groupId 검증
+  validateRequired(groupIdInfo);
+  validateInt(groupIdInfo);
+
+  //createdAt 검증
+  validateRequired(createdAtInfo);
+  validateDate(createdAtInfo);
+
+  //updatedAt 검증
+  validateRequired(updatedAtInfo);
+  validateDate(updatedAtInfo);
+};
