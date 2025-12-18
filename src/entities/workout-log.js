@@ -63,8 +63,6 @@ export class UnregistereWorkoutRecord {
       images: photos,
     };
 
-    // 검증로직
-
     return new UnregistereWorkoutRecord(info);
   }
 }

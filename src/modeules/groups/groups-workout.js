@@ -59,6 +59,10 @@ export const createRecord = async (req, res, next) => {
       record: {
         id: newRecord.id.toString(),
         exerciseType: newRecord.category,
+        description: newRecord.description,
+        time: newRecord.time,
+        distance: newRecord.distance,
+        photos: Array.isArray(newRecord.images) ? newRecord.images : [],
         author: {
           id: newRecord.user.id.toString(),
           nickname: newRecord.user.name,
@@ -114,17 +118,9 @@ export const getRecordDetail = async (req, res, next) => {
         id: Number(record.user.id),
         nickname: record.user.name,
       },
-      group: {
-        name: group.name,
-        description: group.description,
-        tags: group.tags,
-        goalReps: group.goal_reps,
-        discordServerUrl: group.discord_server_url,
-        participantsCount: group.users.length,
-      },
     };
 
-    console.log("기록 상세 조회 결과");
+    console.log("상세 기록 조회 결과");
     console.log(JSON.stringify(responsePayload, null, 2));
 
     return res.status(200).json(responsePayload);
@@ -184,6 +180,8 @@ export const getRecords = async (req, res, next) => {
       data: recordsData,
       total: totalCount,
     };
+
+    console.log("운동 기록 조회 결과");
     console.log(JSON.stringify(responsePayload, null, 2));
 
     return res.status(200).json({
