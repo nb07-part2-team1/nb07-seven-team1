@@ -12,7 +12,7 @@ import {
 
 //UnregistedUser 검증
 const validateUnregisteredUserName = (name) => {
-  const validateInfo = { value: name, path: "nickname" };
+  const validateInfo = { value: name, path: "닉네임" };
   validateRequired(validateInfo);
   validateWhitespace(validateInfo);
   validateLength({ ...validateInfo, minLength: 3, MaxLength: 10 });

@@ -1,7 +1,7 @@
 import { BadRequestError } from "../errors/customError.js";
 
 export const validateExerciseType = ({ value, path }) => {
-  const exerciseTypes = ["러닝", "사이클링", "수영"];
+  const exerciseTypes = ["run", "bike", "swim"];
   if (!exerciseTypes.includes(value)) {
     throw new BadRequestError({
       path,
