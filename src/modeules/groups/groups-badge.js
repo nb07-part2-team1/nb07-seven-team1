@@ -14,7 +14,7 @@ const ensureBadge = async (groupIdBigInt, content) => {
   });
 };
 
-// 배지: 참여자 10명 이상 
+// 배지: 참여자 10명 이상
 export const participantsBadge = async (groupIdBigInt) => {
   const count = await prisma.user.count({
     where: { group_id: groupIdBigInt },
@@ -48,4 +48,3 @@ export const workoutBadge = async (groupIdBigInt) => {
 
   await ensureBadge(groupIdBigInt, BADGE_CONTENT.WORKOUTS_100);
 };
-
