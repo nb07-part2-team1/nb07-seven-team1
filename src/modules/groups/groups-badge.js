@@ -20,9 +20,9 @@ export const participantsBadge = async (groupIdBigInt) => {
     where: { group_id: groupIdBigInt },
   });
 
-  if (count < BADGE_THRESHOLD.PARTICIPANTS_10) return;
+  if (count < BADGE_THRESHOLD.PARTICIPATION_10) return;
 
-  await ensureBadge(groupIdBigInt, BADGE_CONTENT.PARTICIPANTS_10);
+  await ensureBadge(groupIdBigInt, BADGE_CONTENT.PARTICIPATION_10);
 };
 
 // 배지: 추천수 100 이상
@@ -33,9 +33,9 @@ export const likeBadge = async (groupIdBigInt) => {
   });
 
   if (!group) return;
-  if (group.like_count < BADGE_THRESHOLD.LIKES_100) return;
+  if (group.like_count < BADGE_THRESHOLD.LIKE_100) return;
 
-  await ensureBadge(groupIdBigInt, BADGE_CONTENT.LIKES_100);
+  await ensureBadge(groupIdBigInt, BADGE_CONTENT.LIKE_100);
 };
 
 // 배지: 운동 기록 100개 이상
@@ -44,7 +44,7 @@ export const workoutBadge = async (groupIdBigInt) => {
     where: { user: { group_id: groupIdBigInt } },
   });
 
-  if (count < BADGE_THRESHOLD.WORKOUTS_100) return;
+  if (count < BADGE_THRESHOLD.RECORD_100) return;
 
-  await ensureBadge(groupIdBigInt, BADGE_CONTENT.WORKOUTS_100);
+  await ensureBadge(groupIdBigInt, BADGE_CONTENT.RECORD_100);
 };
