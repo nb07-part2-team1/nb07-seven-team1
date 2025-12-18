@@ -1,5 +1,5 @@
 import express from "express";
-import * as groupWorkoutController from "../../modeules/groups/groups-workout.js";
+import * as groupWorkoutController from "../../modules/groups/groups-workout.js";
 
 const router = express.Router();
 
