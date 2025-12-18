@@ -10,8 +10,6 @@ export const joinGroup = async (req, res, next) => {
     const groupId = BigInt(req.params.groupId);
     const { nickname, password } = req.body;
 
-    console.log("joinGroup called with:", { groupId, nickname, password });
-
     const group = await prisma.group.findUnique({
       where: { id: groupId },
     });
@@ -51,6 +49,7 @@ export const joinGroup = async (req, res, next) => {
   }
 };
 
+
 export const leaveGroup = async (req, res, next) => {
   try {
     const groupId = BigInt(req.params.groupId);
@@ -65,13 +64,20 @@ export const leaveGroup = async (req, res, next) => {
       throw new NotFoundError("존재하지 않는 그룹입니다.");
     }
 
-    const user = await checkMember(groupId, nickname, password); // { id, name, password }
+    const user = await checkMember(groupId, nickname, password);
+
+    // 오너 탈퇴 불가
+    const owner = await prisma.owner.findUnique({
+      where: { group_id: groupId },
+      select: { user_id: true },
+    });
+    if (owner?.user_id === user.id) {
+      throw new BadRequestError("방장은 그룹을 탈퇴할 수 없습니다.");
+    }
 
     await prisma.user.delete({
       where: { id: user.id },
     });
-
-    const groupEntity = Group.formEntity(updatedGroup);
 
     return res.status(204).end();
   } catch (err) {
