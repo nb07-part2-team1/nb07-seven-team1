@@ -1,5 +1,5 @@
 import express from "express";
-import * as groupLikeController from "../../modeules/groups/groups-like.js";
+import * as groupLikeController from "../../modules/groups/groups-like.js";
 
 const router = express.Router();
 

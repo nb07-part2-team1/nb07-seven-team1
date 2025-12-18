@@ -1,5 +1,5 @@
 import express from "express";
-import * as groupMainController from "../../modeules/groups/groups-main.js";
+import * as groupMainController from "../../modules/groups/groups-main.js";
 
 const router = express.Router();
 router.post("/", groupMainController.createGroup);
