@@ -1,5 +1,5 @@
 import express from "express";
-import * as imageController from "../modeules/images/index.js";
+import * as imageController from "../modules/images/index.js";
 import { upload } from "../config/multer.config.js";
 
 const router = express.Router();
