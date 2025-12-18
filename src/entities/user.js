@@ -1,178 +1,94 @@
-import { BadRequestError } from "../errors/customError.js";
+import {
+  validateRequired,
+  validateWhitespace,
+  validateDate,
+  validateString,
+  validateLength,
+} from "../utils/validators.common.js";
+import {
+  validateNameRegex,
+  validatePasswordRegex,
+} from "../utils/validators.user.js";
 
-const validateName = (name) => {
-  const nameRegex = /^[a-z0-9가-힣]+$/;
-
-  if (!name || name.trim().length === 0) {
-    throw new BadRequestError({
-      path: "nickname",
-      message: "nickname is required",
-    });
-  }
-  if (/\s/.test(name)) {
-    throw new BadRequestError({
-      path: "nickname",
-      message: "닉네임에 공백은 넣을 수 없습니다",
-    });
-  }
-  if (name.length < 3 || name.length > 10) {
-    throw new BadRequestError({
-      path: "nickname",
-      message: "n닉네임은 3 ~ 10자로 작성해 주세요",
-    });
-  }
-  if (!nameRegex.test(name)) {
-    throw new BadRequestError({
-      path: "nickname",
-      message: "닉네임은 한글, 영문, 숫자만 사용 가능합니다",
-    });
-  }
+//UnregistedUser 검증
+const validateUnregisteredUserName = (name) => {
+  const validateInfo = { value: name, path: "nickname" };
+  validateRequired(validateInfo);
+  validateWhitespace(validateInfo);
+  validateLength({ ...validateInfo, minLength: 3, MaxLength: 10 });
+  validateNameRegex(validateInfo);
 };
-
-const validatePassword = (password) => {
-  const regex =
-    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]:;"'<>,.?/]).{8,20}$/;
-
-  if (!password || password.trim().length === 0) {
-    throw new BadRequestError({
-      path: "password",
-      message: "비밀번호를 입력해 주세요",
-    });
-  }
-  if (password.length < 8 || password.length > 20) {
-    throw new BadRequestError({
-      path: "password",
-      message: "비밀번호는 8 ~ 20자로 작성해 주세요",
-    });
-  }
-  if (!regex.test(password)) {
-    throw new BadRequestError({
-      path: "password",
-      message: "비밀번호는 영문 + 숫자 + 특수문자를 포함해야 합니다",
-    });
-  }
-  if (/\s/.test(password)) {
-    throw new BadRequestError({
-      path: "password",
-      message: "비밀번호에 공백은 넣을 수 없습니다",
-    });
-  }
+const validateUnregisteredUserPassword = (password) => {
+  const validateInfo = { value: password, path: "password" };
+  validateRequired(validateInfo);
+  validateWhitespace(validateInfo);
+  validateLength({ ...validateInfo, minLength: 8, maxLength: 20 });
+  validatePasswordRegex(validateInfo);
+};
+const validateUnregisteredUserGroupId = (groupId) => {
+  const validateInfo = { value: groupId, path: "groupId" };
+  validateRequired(validateInfo);
+};
+const validateUnregisteredUser = ({ name, password, groupId }) => {
+  validateUnregisteredUserName(name);
+  validateUnregisteredUserPassword(password);
+  validateUnregisteredUserGroupId(groupId);
 };
 
-const validateBcryptPassword = (password) => {
-  const BCRYPT_REGEX = /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/;
-  if (typeof password !== "string") {
-    throw new BadRequestError({
-      path: "hash password",
-      message: "Invalid password string format",
-    });
-  }
-  if (!BCRYPT_REGEX.test(password)) {
-    throw new BadRequestError({
-      path: "hash password",
-      message: "Invalid password hash format",
-    });
-  }
+//User 검증
+const validateUserId = (id) => {
+  const validateInfo = { value: id, path: "id" };
+  validateRequired(validateInfo);
+  validateInt(validateInfo);
+};
+const validateUserUserId = (userId) => {
+  const validateInfo = { value: userId, path: "userId" };
+  validateRequired(validateInfo);
+  validateString(validateInfo);
+};
+const validateUserGroupId = (groupId) => {
+  const validateInfo = { value: groupId, path: "groupId" };
+  validateRequired(validateInfo);
+  validateInt(validateInfo);
+};
+const validateUserCreatedAt = (createdAt) => {
+  const validateInfo = { value: createdAt, path: "createdAt" };
+  validateRequired(validateInfo);
+  validateDate(validateInfo);
+};
+const validateUserUpdatedAt = (updatedAt) => {
+  const validateInfo = { value: updatedAt, path: "updatedAt" };
+  validateRequired(validateInfo);
+  validateDate(validateInfo);
 };
 
-const validateId = (id) => {
-  if (typeof id !== "string") {
-    throw new BadRequestError({
-      path: "id",
-      message: `Invalid id type ${typeof id}`,
-    });
-  }
-};
-const validateUserId = (userId) => {
-  if (typeof userId !== "string") {
-    throw new BadRequestError({
-      path: "userId",
-      message: `Invalid id type ${typeof userId}`,
-    });
-  }
-};
-const validateGroupId = (groupId) => {
-  if (typeof groupId !== "string") {
-    throw new BadRequestError({
-      path: "groupId",
-      message: `Invalid id type ${typeof groupId}`,
-    });
-  }
-};
-const validateCreatedAt = (createdAt) => {
-  if (!(createdAt instanceof Date) || Number.isNaN(createdAt.getTime())) {
-    throw new BadRequestError({
-      path: "createdAt",
-      message: `Invalid createdAt ${createdAt.toString()}`,
-    });
-  }
-};
-const validateUpdatedAt = (updatedAt) => {
-  if (!(updatedAt instanceof Date) || Number.isNaN(updatedAt.getTime())) {
-    throw new BadRequestError({
-      path: "updatedAt",
-      message: `Invalid updatedAt ${updatedAt.toString()}`,
-    });
-  }
+const validateUser = ({ id, nickname, groupId, createdAt, updatedAt }) => {
+  validateUserId(id);
+  validateUserUserId(nickname);
+  validateUserGroupId(groupId);
+  validateUserCreatedAt(createdAt);
+  validateUserUpdatedAt(updatedAt);
 };
 
-const validateUnregistedUser = ({ name, password }) => {
-  validateName(name);
-  validatePassword(password);
-};
-
-const validateUser = ({
-  name,
-  password,
-  id,
-  group_id,
-  created_at,
-  updated_at,
-}) => {
-  validateName(name);
-  validateBcryptPassword(password);
-  validateId(id);
-  validateGroupId(group_id);
-  validateCreatedAt(created_at);
-  validateUpdatedAt(updated_at);
-};
-
-const validateUserInOner = ({
-  id,
-  nickName,
-  userId,
-  groupId,
-  createdAt,
-  updatedAt,
-}) => {
-  validateId(id);
-  validateName(nickName);
-  validateUserId(userId);
-  validateGroupId(groupId);
-  validateCreatedAt(createdAt);
-  validateUpdatedAt(updatedAt);
-};
-
-//user
 export class User {
-  constructor({ id, name, password, groupId, createdAt, updatedAt }) {
+  constructor({ id, nickname, groupId, createdAt, updatedAt }) {
     this.id = id;
-    this.name = name;
-    this.password = password;
+    this.nickname = nickname;
     this.groupId = groupId;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
 
-  static create({ id, name, password, group_id, created_at, updated_at }) {
+  static formEntity({ id, name, group_id, created_at, updated_at }) {
     const info = {
-      id: id.toString(),
-      name,
-      password,
-      group_id: group_id.toString(),
-      created_at,
-      updated_at,
+      id: parseInt(id),
+      nickname: name,
+      groupId: parseInt(group_id),
+      createdAt: created_at,
+      updatedAt: updated_at,
     };
+
+    //검증 로직
     validateUser(info);
 
     return new User(info);
@@ -180,46 +96,26 @@ export class User {
 }
 
 export class UnregisteredUser {
-  constructor({ name, password, groupId }) {
+  constructor({ name, password, group_id }) {
     this.name = name;
     this.password = password;
-    this.groupId = groupId;
+    this.group_id = group_id;
   }
 
-  static create({ name, password, groupId }) {
+  static formInfo({ name, password, groupId }) {
     const info = {
       name,
       password,
-      groupId,
+      group_id: BigInt(groupId),
     };
-    validateUnregistedUser({ name: info.name, password: info.password });
+
+    //검증 로직
+    validateUnregisteredUser({
+      name: info.name,
+      password: info.password,
+      groupId: info.group_id,
+    });
 
     return new UnregisteredUser(info);
-  }
-}
-
-//owner
-export class UserInOwner {
-  constructor({ id, nickName, userId, groupId, createdAt, updatedAt }) {
-    this.id = id;
-    this.nickName = nickName;
-    this.userId = userId;
-    this.groupId = groupId;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
-
-  static create({ id, nickName, userId, groupId, createdAt, updatedAt }) {
-    const info = {
-      id: id.toString(),
-      nickName,
-      userId: userId.toString(),
-      groupId: groupId.toString(),
-      createdAt,
-      updatedAt,
-    };
-    validateUserInOner(info);
-
-    return new UserInOwner(info);
   }
 }

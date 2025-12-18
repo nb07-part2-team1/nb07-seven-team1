@@ -1,10 +1,6 @@
 import { prisma } from "../../../prisma/prisma.js";
 import bcrypt from "bcrypt";
-import {
-  UnregisteredUser,
-  User,
-  UserInOwner,
-} from "../../entities/user/user.js";
+import { UnregisteredUser, User } from "../../entities/user.js";
 import {
   ConflictError,
   UnauthorizedError,
@@ -15,13 +11,14 @@ import {
  * user create function
  */
 const createUserInGroup = async ({ nickname, password, groupId }) => {
-  const unregUser = UnregisteredUser.create({
+  const unregUser = UnregisteredUser.formInfo({
     name: nickname.toLowerCase(),
     password,
     groupId,
   });
-  await nameToCheck(unregUser.name, groupId);
+  await nameToCheck(unregUser.name, unregUser.groupId);
   const hashedPassword = await hashPassword(unregUser.password);
+
   const createUser = await prisma.user.create({
     data: {
       name: unregUser.name,
@@ -29,7 +26,7 @@ const createUserInGroup = async ({ nickname, password, groupId }) => {
       group_id: groupId,
     },
   });
-  const user = User.create(createUser);
+  const user = User.formEntity(createUser);
 
   return user;
 };
@@ -57,15 +54,15 @@ const hashPassword = async (password) => {
  * user delete function
  */
 const deleteUserInGroup = async ({ nickname, password, groupId }) => {
-  const unregUser = UnregisteredUser.create({
-    name: nickname,
+  const unregUser = UnregisteredUser.formInfo({
+    name: nickname.toLowerCase(),
     password,
     groupId,
   });
   const getUser = await findUser(
     unregUser.name,
     unregUser.password,
-    unregUser.groupId
+    unregUser.group_id
   );
 
   await prisma.user.delete({
@@ -105,38 +102,8 @@ const verifyPassword = async (inputPassword, hashedPassword) => {
   return await bcrypt.compare(inputPassword, hashedPassword);
 };
 
-/**
- * owner function
- * reponse data GET
- */
-const getOwner = async (groupId) => {
-  const ownerData = await prisma.owner.findFirst({
-    where: {
-      group_id: Number(groupId),
-    },
-  });
-
-  const ownerUserData = await prisma.user.findFirst({
-    where: {
-      id: ownerData.user_id,
-      group_id: Number(groupId),
-    },
-  });
-
-  const owner = UserInOwner.create({
-    id: ownerData.id,
-    nickName: ownerUserData.name,
-    userId: ownerUserData.id,
-    groupId: ownerUserData.group_id,
-    createdAt: ownerUserData.created_at,
-    updatedAt: ownerUserData.updated_at,
-  });
-
-  return owner;
-};
-
 //mapper
-const userResponse = (resUserData, resGroupData, resOwnerData, resBadge) => {
+const userResponse = (resUserData, resGroupData, resBadge) => {
   return { id: 99999, name: "99999" };
   // return {
   //   id: resGroupData.id,
@@ -184,7 +151,6 @@ export const createUser = async (req, res, next) => {
       groupId,
     });
     // const resGroupData = await getGroup(groupId);
-    // const resOwnerData = await getOwner(groupId);
     // const resBadge = await getbadge(groupId);
 
     // const resData = userResponse(resUserData, resGroupData, resOwnerData);
