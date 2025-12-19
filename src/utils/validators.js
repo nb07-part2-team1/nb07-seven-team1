@@ -8,7 +8,9 @@ import {
   validateLength,
   validateUrl,
   validateTime,
+  validateArray,
 } from "./validators.common.js";
+import { validateExerciseType } from "./validators.workout.js";
 import { validateNameRegex, validatePasswordRegex } from "./validators.user.js";
 
 /**
@@ -171,7 +173,6 @@ export const validateUser = ({
 
   //id 검증
   validateRequired(idInfo);
-  validateInt(idInfo);
 
   //nickname 검증
   validateRequired(nicknameInfo);
@@ -179,7 +180,6 @@ export const validateUser = ({
 
   //groupId 검증
   validateRequired(groupIdInfo);
-  validateInt(groupIdInfo);
 
   //createdAt 검증
   validateRequired(createdAtInfo);
