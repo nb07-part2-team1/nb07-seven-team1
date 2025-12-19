@@ -3,16 +3,49 @@ import { Group } from "../../entities/group.js";
 import { UnregisteredUser, User } from "../../entities/user.js";
 import { participantsBadge } from "./groups-badge.js";
 import {
-  createUser,
-  deleteUser,
-  findGroupWithRelationsData,
-} from "../../utils/groups-participants.creator.js";
-import {
   checkMember,
   checkNickname,
   existGroup,
   checkOwner,
 } from "../../utils/groups-participants.auth.js";
+
+//참가 유저 생성
+const createUser = async ({ group_id, name, password }) => {
+  return await prisma.user.create({
+    data: {
+      group_id,
+      name,
+      password,
+    },
+  });
+};
+
+//참가 유저 삭제
+const deleteUser = async (userId) => {
+  await prisma.user.delete({
+    where: { id: userId },
+  });
+};
+
+// owner, users (password 제외), badges 정보 포함해서 group 조회
+const findGroupWithRelationsData = async (groupId) => {
+  return await prisma.group.findUnique({
+    where: { id: groupId },
+    include: {
+      owner: true,
+      users: {
+        select: {
+          id: true,
+          name: true,
+          created_at: true,
+          updated_at: true,
+          group_id: true,
+        },
+      },
+      badges: true,
+    },
+  });
+};
 
 export const joinGroup = async (req, res, next) => {
   try {
