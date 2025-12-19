@@ -1,14 +1,14 @@
 import {
-  validateRequired,
   validateWhitespace,
-  validateString,
   validatePhotoUrl,
   validatePositiveInteger,
   validateDate,
   validateLength,
   validateUrl,
   validateTime,
+  validateArray,
 } from "./validators.common.js";
+import { validateExerciseType } from "./validators.workout.js";
 import { validateNameRegex, validatePasswordRegex } from "./validators.user.js";
 
 /**
@@ -29,43 +29,34 @@ export const validateUnregisteredGroup = ({
   discord_web_url,
   discord_server_url,
 }) => {
-  //value, path로 객체 파라미터 분리
-  const nameInfo = { value: name, path: "그룹명" };
-  const descriptionInfo = { value: description, path: "description" };
-  const photoUrlInfo = { value: image, path: "photoUrl" };
-  const goalRepsInfo = { value: goal_reps, path: "goalReps" };
-  const discordWebhookUrlInfo = {
-    value: discord_web_url,
-    path: "discordWebhookUrl",
-  };
-  const discordInviteUrlInfo = {
-    value: discord_server_url,
-    path: "discordInviteUrl",
-  };
-
   //name 검증
-  validateRequired(nameInfo);
-  validateLength({ ...nameInfo, minLength: 3, maxLength: 15 });
+  validateLength({ value: name, path: "그룹명", minLength: 3, maxLength: 15 });
 
   //description 검증
-  validateRequired(descriptionInfo);
-  validateString(descriptionInfo);
-  validateLength({ ...descriptionInfo, minLength: 3, maxLength: 50 });
+  validateLength({
+    value: description,
+    path: "description",
+    minLength: 3,
+    maxLength: 50,
+  });
 
   //photoURL 검증
-  validatePhotoUrl(photoUrlInfo);
+  validatePhotoUrl({ value: image, path: "photoUrl" });
 
   //goalreps 검증
-  validateRequired(goalRepsInfo);
-  validatePositiveInteger(goalRepsInfo);
+  validatePositiveInteger({ value: goal_reps, path: "goalReps" });
 
   //discordWebURL 검증
-  validateRequired(discordWebhookUrlInfo);
-  validateUrl(discordWebhookUrlInfo);
+  validateUrl({
+    value: discord_web_url,
+    path: "discordWebhookUrl",
+  });
 
   //discordInviteURL 검증
-  validateRequired(discordInviteUrlInfo);
-  validateUrl(discordInviteUrlInfo);
+  validateUrl({
+    value: discord_server_url,
+    path: "discordInviteUrl",
+  });
 };
 
 export const validateGroup = ({
@@ -81,78 +72,43 @@ export const validateGroup = ({
   createdAt,
   updatedAt,
 }) => {
-  //value, path로 객체 파라미터 분리
-  const idInfo = { value: id, path: "id" };
-  const nameInfo = { value: name, path: "그룹명" };
-  const descriptionInfo = { value: description, path: "description" };
-  const photoUrlInfo = { value: photoUrl, path: "photoUrl" };
-  const goalRepsInfo = { value: goalRep, path: "goalReps" };
-  const discordWebhookUrlInfo = {
+  //discordWebURL 검증
+  validateUrl({
     value: discordWebhookUrl,
     path: "discordWebhookUrl",
-  };
-  const discordInviteUrlInfo = {
-    value: discordInviteUrl,
-    path: "discordInviteUrl",
-  };
-  const createdAtInfo = { value: createdAt, path: "createdAt" };
-  const updatedAtInfo = { value: updatedAt, path: "updatedAt" };
-
-  //id 검증
-  validateRequired(idInfo);
-
-  //name 검증
-  validateRequired(nameInfo);
-
-  //description 검증
-  validateRequired(descriptionInfo);
-
-  //photoURL 검증
-  validatePhotoUrl(photoUrlInfo);
-
-  //goalreps 검증
-  validateRequired(goalRepsInfo);
-
-  //discordWebURL 검증
-  validateRequired(discordWebhookUrlInfo);
-  validateUrl(discordWebhookUrlInfo);
+  });
 
   //discordInviteURL 검증
-  validateRequired(discordInviteUrlInfo);
-  validateUrl(discordInviteUrlInfo);
+  validateUrl({
+    value: discordInviteUrl,
+    path: "discordInviteUrl",
+  });
 
   //createdAt 검증
-  validateRequired(createdAtInfo);
-  validateDate(createdAtInfo);
+  validateDate({ value: createdAt, path: "createdAt" });
 
   //updatedAt 검증
-  validateRequired(updatedAtInfo);
-  validateDate(updatedAtInfo);
+  validateDate({ value: updatedAt, path: "updatedAt" });
 };
 
 /**
  * user entity validate function
  */
 export const validateUnregisteredUser = ({ name, password, groupId }) => {
-  //value, path로 객체 파라미터 분리
-  const nicknameInfo = { value: name, path: "닉네임" };
-  const passwordInfo = { value: password, path: "password" };
-  const groupIdInfo = { value: groupId, path: "groupId" };
-
   //nickname 검증
-  validateRequired(nicknameInfo);
-  validateWhitespace(nicknameInfo);
-  validateLength({ ...nicknameInfo, minLength: 3, MaxLength: 10 });
-  validateNameRegex(nicknameInfo);
+  validateWhitespace({ value: name, path: "닉네임" });
+  validateLength({ value: name, path: "닉네임", minLength: 3, MaxLength: 10 });
+  validateNameRegex({ value: name, path: "닉네임" });
 
   //password 검증
-  validateRequired(passwordInfo);
-  validateWhitespace(passwordInfo);
-  validateLength({ ...passwordInfo, minLength: 8, maxLength: 20 });
-  validatePasswordRegex(passwordInfo);
-
-  //groupId 검증
-  validateRequired(groupIdInfo);
+  validateWhitespace({ value: password, path: "password" });
+  validateLength({
+    value: password,
+    path: "password",
+    minLength: 8,
+    maxLength: 20,
+  });
+  validatePasswordRegex({ value: password, path: "password" });
 };
 
 export const validateUser = ({
@@ -162,70 +118,27 @@ export const validateUser = ({
   createdAt,
   updatedAt,
 }) => {
-  //value, path로 객체 파라미터 분리
-  const idInfo = { value: id, path: "id" };
-  const nicknameInfo = { value: nickname, path: "닉네임" };
-  const groupIdInfo = { value: groupId, path: "groupId" };
-  const createdAtInfo = { value: createdAt, path: "createdAt" };
-  const updatedAtInfo = { value: updatedAt, path: "updatedAt" };
-
-  //id 검증
-  validateRequired(idInfo);
-  validateInt(idInfo);
-
-  //nickname 검증
-  validateRequired(nicknameInfo);
-  validateString(nicknameInfo);
-
-  //groupId 검증
-  validateRequired(groupIdInfo);
-  validateInt(groupIdInfo);
-
   //createdAt 검증
-  validateRequired(createdAtInfo);
-  validateDate(createdAtInfo);
+  validateDate({ value: createdAt, path: "createdAt" });
 
   //updatedAt 검증
-  validateRequired(updatedAtInfo);
-  validateDate(updatedAtInfo);
+  validateDate({ value: updatedAt, path: "updatedAt" });
 };
 
 /**
  * badge entity validate function
  */
 export const validateUnregisteredBadge = ({ content, group_id }) => {
-  //value, path로 객체 파라미터 분리
-  const groupIdInfo = { value: group_id, path: "groupId" };
-  const contentInfo = { value: content, path: "content" };
-
-  //groupId 검증
-  validateRequired(groupIdInfo);
-
   //content 검증
-  validateRequired(contentInfo);
-  validateArray(contentInfo);
+  validateArray({ value: content, path: "content" });
 };
 
 export const validateBadge = ({ id, content, createdAt, groupId }) => {
-  //value, path로 객체 파라미터 분리
-  const idInfo = { value: id, path: "id" };
-  const contentInfo = { value: content, path: "content" };
-  const createdAtInfo = { value: createdAt, path: "createdAt" };
-  const groupIdInfo = { value: groupId, path: "groupId" };
-
-  //id 검증
-  validateRequired(idInfo);
-
   //content 검증
-  validateRequired(contentInfo);
-  validateArray(contentInfo);
+  validateArray({ value: content, path: "content" });
 
   //createdAt 검증
-  validateRequired(createdAtInfo);
-  validateDate(createdAtInfo);
-
-  //groupId 검증
-  validateRequired(groupIdInfo);
+  validateDate({ value: createdAt, path: "createdAt" });
 };
 
 /**
@@ -238,33 +151,18 @@ export const validateUnregisteredWorkoutRecord = ({
   distance,
   images,
 }) => {
-  //value, path로 객체 파라미터 분리
-  const exerciseTypeInfo = { value: catagory, path: "exerciseType" };
-  const descriptionInfo = { value: description, path: "description" };
-  const timeInfo = { value: time, path: "time" };
-  const distanceInfo = { value: distance, path: "distance" };
-  const imagesInfo = { value: images, path: "images" };
-
   //exerciseType 검증
-  validateRequired(exerciseTypeInfo);
-  validateWhitespace(exerciseTypeInfo);
-  validateString(exerciseTypeInfo);
-  validateExerciseType(exerciseTypeInfo);
-
-  //description 검증
-  validateRequired(descriptionInfo);
-  validateString(descriptionInfo);
+  validateWhitespace({ value: catagory, path: "exerciseType" });
+  validateExerciseType({ value: catagory, path: "exerciseType" });
 
   //time 검증
-  validateRequired(timeInfo);
-  validateTime(timeInfo);
+  validateTime({ value: time, path: "time" });
 
   //distance 검증
-  validateRequired(distanceInfo);
-  validatePositiveInteger(distanceInfo);
+  validatePositiveInteger({ value: distance, path: "distance" });
 
   //iamges 검증
-  validateArray(imagesInfo);
+  validateArray({ value: images, path: "images" });
 };
 
 export const validateWorkoutRecord = ({
@@ -274,27 +172,12 @@ export const validateWorkoutRecord = ({
   distance,
   photos,
 }) => {
-  //value, path로 객체 파라미터 분리
-  const exerciseTypeInfo = { value: exerciseType, path: "exerciseType" };
-  const descriptionInfo = { value: description, path: "description" };
-  const timeInfo = { value: time, path: "time" };
-  const distanceInfo = { value: distance, path: "distance" };
-  const photosInfo = { value: photos, path: "photos" };
-
   //exerciseType 검증
-  validateRequired(validateInfo);
-  validateExerciseType(validateInfo);
-
-  //description 검증
-  validateRequired(validateInfo);
-
-  //time 검증
-  validateRequired(validateInfo);
+  validateExerciseType({ value: exerciseType, path: "exerciseType" });
 
   //distance 검증
-  validateRequired(validateInfo);
-  validatePositiveInteger(validateInfo);
+  validatePositiveInteger({ value: distance, path: "distance" });
 
   //photos 검증
-  validateArray(validateInfo);
+  validateArray({ value: photos, path: "photos" });
 };
