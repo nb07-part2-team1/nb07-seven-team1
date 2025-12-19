@@ -5,8 +5,11 @@ import { likeBadge } from "./groups-badge.js";
 const updateLikeCount = async (groupId, delta) => {
   return prisma.group.update({
     where: { id: groupId },
-    data: { like_count: { increment: delta } },
-    select: { like_count: true },
+    data: {
+      like_count: isLike
+        ? { increment: 1 }
+        : { decrement: 1 },
+    },
   });
 };
 
