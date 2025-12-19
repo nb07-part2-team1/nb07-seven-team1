@@ -1,6 +1,5 @@
 import {
   validateWhitespace,
-  validateString,
   validatePhotoUrl,
   validatePositiveInteger,
   validateDate,
@@ -48,7 +47,6 @@ export const validateUnregisteredGroup = ({
   validateLength({ ...nameInfo, minLength: 3, maxLength: 15 });
 
   //description 검증
-  validateString(descriptionInfo);
   validateLength({ ...descriptionInfo, minLength: 3, maxLength: 50 });
 
   //photoURL 검증
@@ -133,9 +131,6 @@ export const validateUser = ({
   const createdAtInfo = { value: createdAt, path: "createdAt" };
   const updatedAtInfo = { value: updatedAt, path: "updatedAt" };
 
-  //nickname 검증
-  validateString(nicknameInfo);
-
   //createdAt 검증
   validateDate(createdAtInfo);
 
@@ -178,18 +173,13 @@ export const validateUnregisteredWorkoutRecord = ({
 }) => {
   //value, path로 객체 파라미터 분리
   const exerciseTypeInfo = { value: catagory, path: "exerciseType" };
-  const descriptionInfo = { value: description, path: "description" };
   const timeInfo = { value: time, path: "time" };
   const distanceInfo = { value: distance, path: "distance" };
   const imagesInfo = { value: images, path: "images" };
 
   //exerciseType 검증
   validateWhitespace(exerciseTypeInfo);
-  validateString(exerciseTypeInfo);
   validateExerciseType(exerciseTypeInfo);
-
-  //description 검증
-  validateString(descriptionInfo);
 
   //time 검증
   validateTime(timeInfo);
