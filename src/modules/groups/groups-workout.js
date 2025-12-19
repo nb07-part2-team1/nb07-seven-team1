@@ -28,7 +28,7 @@ export const createRecord = async (req, res, next) => {
 
     const user = await prisma.user.findFirst({
       where: { name: authorNickname, group_id: BigInt(groupId) },
-      select: { id: true, password: true },
+      select: { id: true, name: true, password: true },
     });
 
     if (!user || authorPassword !== user.password) {
