@@ -29,7 +29,7 @@ export const checkMember = async ({ groupId, nickname, password }) => {
 
 export const checkNickname = async ({ groupId, nickname }) => {
   const existsName = await prisma.user.findFirst({
-    where: { groupId, nickname },
+    where: { group_id: groupId, name: nickname },
   });
 
   if (existsName)
