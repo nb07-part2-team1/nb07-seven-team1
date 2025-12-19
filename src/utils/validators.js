@@ -1,5 +1,4 @@
 import {
-  validateRequired,
   validateWhitespace,
   validateString,
   validatePhotoUrl,
@@ -46,11 +45,9 @@ export const validateUnregisteredGroup = ({
   };
 
   //name 검증
-  validateRequired(nameInfo);
   validateLength({ ...nameInfo, minLength: 3, maxLength: 15 });
 
   //description 검증
-  validateRequired(descriptionInfo);
   validateString(descriptionInfo);
   validateLength({ ...descriptionInfo, minLength: 3, maxLength: 50 });
 
@@ -58,15 +55,12 @@ export const validateUnregisteredGroup = ({
   validatePhotoUrl(photoUrlInfo);
 
   //goalreps 검증
-  validateRequired(goalRepsInfo);
   validatePositiveInteger(goalRepsInfo);
 
   //discordWebURL 검증
-  validateRequired(discordWebhookUrlInfo);
   validateUrl(discordWebhookUrlInfo);
 
   //discordInviteURL 검증
-  validateRequired(discordInviteUrlInfo);
   validateUrl(discordInviteUrlInfo);
 };
 
@@ -101,34 +95,25 @@ export const validateGroup = ({
   const updatedAtInfo = { value: updatedAt, path: "updatedAt" };
 
   //id 검증
-  validateRequired(idInfo);
 
   //name 검증
-  validateRequired(nameInfo);
 
   //description 검증
-  validateRequired(descriptionInfo);
 
   //photoURL 검증
-  validatePhotoUrl(photoUrlInfo);
 
   //goalreps 검증
-  validateRequired(goalRepsInfo);
 
   //discordWebURL 검증
-  validateRequired(discordWebhookUrlInfo);
   validateUrl(discordWebhookUrlInfo);
 
   //discordInviteURL 검증
-  validateRequired(discordInviteUrlInfo);
   validateUrl(discordInviteUrlInfo);
 
   //createdAt 검증
-  validateRequired(createdAtInfo);
   validateDate(createdAtInfo);
 
   //updatedAt 검증
-  validateRequired(updatedAtInfo);
   validateDate(updatedAtInfo);
 };
 
@@ -142,19 +127,16 @@ export const validateUnregisteredUser = ({ name, password, groupId }) => {
   const groupIdInfo = { value: groupId, path: "groupId" };
 
   //nickname 검증
-  validateRequired(nicknameInfo);
   validateWhitespace(nicknameInfo);
   validateLength({ ...nicknameInfo, minLength: 3, MaxLength: 10 });
   validateNameRegex(nicknameInfo);
 
   //password 검증
-  validateRequired(passwordInfo);
   validateWhitespace(passwordInfo);
   validateLength({ ...passwordInfo, minLength: 8, maxLength: 20 });
   validatePasswordRegex(passwordInfo);
 
   //groupId 검증
-  validateRequired(groupIdInfo);
 };
 
 export const validateUser = ({
@@ -172,21 +154,16 @@ export const validateUser = ({
   const updatedAtInfo = { value: updatedAt, path: "updatedAt" };
 
   //id 검증
-  validateRequired(idInfo);
 
   //nickname 검증
-  validateRequired(nicknameInfo);
   validateString(nicknameInfo);
 
   //groupId 검증
-  validateRequired(groupIdInfo);
 
   //createdAt 검증
-  validateRequired(createdAtInfo);
   validateDate(createdAtInfo);
 
   //updatedAt 검증
-  validateRequired(updatedAtInfo);
   validateDate(updatedAtInfo);
 };
 
@@ -199,10 +176,8 @@ export const validateUnregisteredBadge = ({ content, group_id }) => {
   const contentInfo = { value: content, path: "content" };
 
   //groupId 검증
-  validateRequired(groupIdInfo);
 
   //content 검증
-  validateRequired(contentInfo);
   validateArray(contentInfo);
 };
 
@@ -214,18 +189,14 @@ export const validateBadge = ({ id, content, createdAt, groupId }) => {
   const groupIdInfo = { value: groupId, path: "groupId" };
 
   //id 검증
-  validateRequired(idInfo);
 
   //content 검증
-  validateRequired(contentInfo);
   validateArray(contentInfo);
 
   //createdAt 검증
-  validateRequired(createdAtInfo);
   validateDate(createdAtInfo);
 
   //groupId 검증
-  validateRequired(groupIdInfo);
 };
 
 /**
@@ -246,21 +217,17 @@ export const validateUnregisteredWorkoutRecord = ({
   const imagesInfo = { value: images, path: "images" };
 
   //exerciseType 검증
-  validateRequired(exerciseTypeInfo);
   validateWhitespace(exerciseTypeInfo);
   validateString(exerciseTypeInfo);
   validateExerciseType(exerciseTypeInfo);
 
   //description 검증
-  validateRequired(descriptionInfo);
   validateString(descriptionInfo);
 
   //time 검증
-  validateRequired(timeInfo);
   validateTime(timeInfo);
 
   //distance 검증
-  validateRequired(distanceInfo);
   validatePositiveInteger(distanceInfo);
 
   //iamges 검증
@@ -282,17 +249,13 @@ export const validateWorkoutRecord = ({
   const photosInfo = { value: photos, path: "photos" };
 
   //exerciseType 검증
-  validateRequired(validateInfo);
   validateExerciseType(validateInfo);
 
   //description 검증
-  validateRequired(validateInfo);
 
   //time 검증
-  validateRequired(validateInfo);
 
   //distance 검증
-  validateRequired(validateInfo);
   validatePositiveInteger(validateInfo);
 
   //photos 검증
