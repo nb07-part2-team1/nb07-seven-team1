@@ -5,6 +5,17 @@ import { UnregistereWorkoutRecord } from "../../entities/workout-log.js";
 import { NotFoundError, UnauthorizedError } from "../../errors/customError.js";
 import { workoutBadge } from "./groups-badge.js";
 
+const convertExerciseTypeName = (exerciseType) => {
+  switch (exerciseType) {
+    case "run":
+      return "달리기";
+    case "swim":
+      return "수영";
+    case "bike":
+      return "사이클링";
+  }
+};
+
 const responseFormat = (record) => ({
   id: Number(record.id),
   exerciseType: record.category,
@@ -64,11 +75,9 @@ export const createRecord = async (req, res, next) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        content: `${user.name}님의 운동 기록이 추가되었습니다.`,
+        content: `${user.name}님의 ${convertExerciseTypeName(recordData.exerciseType)} 운동 기록이 추가되었습니다.`,
       }),
     });
-
-    console.log(discordResponse);
 
     const responsePayload = responseFormat(newRecord);
 
