@@ -114,7 +114,7 @@ const getOrderBy = (order, direction) => {
   }
 };
 
-export const getGroups = async (req, res) => {
+export const getGroups = async (req, res, next) => {
   try {
     const { page, limit, order, orderBy, search } = req.query;
     const newOrderBy = getOrderBy(orderBy, order);
