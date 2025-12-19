@@ -3,6 +3,7 @@
 import { prisma } from "../../../prisma/prisma.js";
 import { UnregistereWorkoutRecord } from "../../entities/workout-log.js";
 import { NotFoundError, UnauthorizedError } from "../../errors/customError.js";
+import { workoutBadge } from "./groups-badge.js";
 
 const responseFormat = (record) => ({
   id: Number(record.id),
@@ -48,9 +49,9 @@ export const createRecord = async (req, res, next) => {
       include: { user: { select: { id: true, name: true } } },
     });
 
-    const responsePayload = responseFormat(newRecord);
+    await workoutBadge(BigInt(groupId));
 
-    console.log(JSON.stringify(responsePayload, null, 2));
+    const responsePayload = responseFormat(newRecord);
 
     return res.status(201).json(responsePayload);
   } catch (error) {
@@ -88,7 +89,6 @@ export const getRecordDetail = async (req, res, next) => {
     if (!record) throw new NotFoundError("해당 운동 기록을 찾을 수 없습니다.");
 
     const responsePayload = responseFormat(record);
-    console.log(JSON.stringify(responsePayload, null, 2));
 
     return res.status(200).json(responsePayload);
   } catch (error) {
@@ -133,8 +133,6 @@ export const getRecords = async (req, res, next) => {
       data: recordsData,
       total: totalCount,
     };
-
-    console.log(JSON.stringify(responsePayload, null, 2));
 
     return res.status(200).json({
       data: recordsData,
