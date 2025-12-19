@@ -78,11 +78,6 @@ export const validateGroup = ({
   updatedAt,
 }) => {
   //value, path로 객체 파라미터 분리
-  const idInfo = { value: id, path: "id" };
-  const nameInfo = { value: name, path: "그룹명" };
-  const descriptionInfo = { value: description, path: "description" };
-  const photoUrlInfo = { value: photoUrl, path: "photoUrl" };
-  const goalRepsInfo = { value: goalRep, path: "goalReps" };
   const discordWebhookUrlInfo = {
     value: discordWebhookUrl,
     path: "discordWebhookUrl",
@@ -93,16 +88,6 @@ export const validateGroup = ({
   };
   const createdAtInfo = { value: createdAt, path: "createdAt" };
   const updatedAtInfo = { value: updatedAt, path: "updatedAt" };
-
-  //id 검증
-
-  //name 검증
-
-  //description 검증
-
-  //photoURL 검증
-
-  //goalreps 검증
 
   //discordWebURL 검증
   validateUrl(discordWebhookUrlInfo);
@@ -124,7 +109,6 @@ export const validateUnregisteredUser = ({ name, password, groupId }) => {
   //value, path로 객체 파라미터 분리
   const nicknameInfo = { value: name, path: "닉네임" };
   const passwordInfo = { value: password, path: "password" };
-  const groupIdInfo = { value: groupId, path: "groupId" };
 
   //nickname 검증
   validateWhitespace(nicknameInfo);
@@ -135,8 +119,6 @@ export const validateUnregisteredUser = ({ name, password, groupId }) => {
   validateWhitespace(passwordInfo);
   validateLength({ ...passwordInfo, minLength: 8, maxLength: 20 });
   validatePasswordRegex(passwordInfo);
-
-  //groupId 검증
 };
 
 export const validateUser = ({
@@ -147,18 +129,12 @@ export const validateUser = ({
   updatedAt,
 }) => {
   //value, path로 객체 파라미터 분리
-  const idInfo = { value: id, path: "id" };
   const nicknameInfo = { value: nickname, path: "닉네임" };
-  const groupIdInfo = { value: groupId, path: "groupId" };
   const createdAtInfo = { value: createdAt, path: "createdAt" };
   const updatedAtInfo = { value: updatedAt, path: "updatedAt" };
 
-  //id 검증
-
   //nickname 검증
   validateString(nicknameInfo);
-
-  //groupId 검증
 
   //createdAt 검증
   validateDate(createdAtInfo);
@@ -172,10 +148,7 @@ export const validateUser = ({
  */
 export const validateUnregisteredBadge = ({ content, group_id }) => {
   //value, path로 객체 파라미터 분리
-  const groupIdInfo = { value: group_id, path: "groupId" };
   const contentInfo = { value: content, path: "content" };
-
-  //groupId 검증
 
   //content 검증
   validateArray(contentInfo);
@@ -183,20 +156,14 @@ export const validateUnregisteredBadge = ({ content, group_id }) => {
 
 export const validateBadge = ({ id, content, createdAt, groupId }) => {
   //value, path로 객체 파라미터 분리
-  const idInfo = { value: id, path: "id" };
   const contentInfo = { value: content, path: "content" };
   const createdAtInfo = { value: createdAt, path: "createdAt" };
-  const groupIdInfo = { value: groupId, path: "groupId" };
-
-  //id 검증
 
   //content 검증
   validateArray(contentInfo);
 
   //createdAt 검증
   validateDate(createdAtInfo);
-
-  //groupId 검증
 };
 
 /**
@@ -243,21 +210,15 @@ export const validateWorkoutRecord = ({
 }) => {
   //value, path로 객체 파라미터 분리
   const exerciseTypeInfo = { value: exerciseType, path: "exerciseType" };
-  const descriptionInfo = { value: description, path: "description" };
-  const timeInfo = { value: time, path: "time" };
   const distanceInfo = { value: distance, path: "distance" };
   const photosInfo = { value: photos, path: "photos" };
 
   //exerciseType 검증
-  validateExerciseType(validateInfo);
-
-  //description 검증
-
-  //time 검증
+  validateExerciseType(exerciseTypeInfo);
 
   //distance 검증
-  validatePositiveInteger(validateInfo);
+  validatePositiveInteger(distanceInfo);
 
   //photos 검증
-  validateArray(validateInfo);
+  validateArray(photosInfo);
 };
