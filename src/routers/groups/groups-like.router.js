@@ -7,6 +7,6 @@ const router = express.Router();
 router.post("/:groupId/likes", groupLikeController.likeGroup);
 
 // DELETE /groups/{groupId}/likes
-router.delete("/:groupId/likes", groupLikeController.unlikeGroup);
+router.delete("/:groupId/likes", groupLikeController.unLikeGroup);
 
 export default router;
