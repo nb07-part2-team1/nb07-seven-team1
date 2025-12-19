@@ -51,6 +51,25 @@ export const createRecord = async (req, res, next) => {
 
     await workoutBadge(BigInt(groupId));
 
+    //discord webhook message
+    const groupInfo = await prisma.group.findUnique({
+      where: {
+        id: groupId,
+      },
+    });
+
+    const discordResponse = await fetch(groupInfo.discord_web_url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        content: `${user.name}님의 운동 기록이 추가되었습니다.`,
+      }),
+    });
+
+    console.log(discordResponse);
+
     const responsePayload = responseFormat(newRecord);
 
     return res.status(201).json(responsePayload);
