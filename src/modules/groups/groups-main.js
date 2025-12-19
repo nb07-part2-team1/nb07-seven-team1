@@ -15,7 +15,7 @@ const formatGroupResponse = (group) => {
     createdAt: user.created_at.getTime(),
     updatedAt: user.updated_at.getTime(),
   }));
-  const badges = group.badges.map((badge) => badge.name);
+  const badges = group.badges.map((badge) => badge.content);
 
   return {
     id: Number(group.id),
