@@ -1,16 +1,16 @@
 import express from "express";
-import * as groupWorkoutController from "../../modules/groups/groups-workout.js";
+import GroupWorkouLogController from "../../modules/groups/groups-workout-log.controller.js";
 
 const router = express.Router();
 
 //post
-router.post("/:groupId/records", groupWorkoutController.createRecord);
+router.post("/:groupId/records", GroupWorkouLogController.create);
 //get
-router.get("/:groupId/records", groupWorkoutController.getRecords);
+router.get("/:groupId/records", GroupWorkouLogController.getRecords);
 //get 상세
 router.get(
   "/:groupId/records/:recordId",
-  groupWorkoutController.getRecordDetail
+  GroupWorkouLogController.getRecordDetail
 );
 
 export default router;
