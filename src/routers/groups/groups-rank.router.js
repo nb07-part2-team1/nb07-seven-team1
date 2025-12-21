@@ -1,8 +1,8 @@
 import express from "express";
-import * as groupLankController from "../../modules/groups/groups-rank.js";
+import GroupLankController from "../../modules/groups/groups-rank.controller.js";
 
 const router = express.Router();
 
-router.get("/:groupId/rank", groupLankController.getRank);
+router.get("/:groupId/rank", GroupLankController.getWorkoutRank);
 
 export default router;
