@@ -1,5 +1,6 @@
 import { prisma } from "../../../prisma/prisma.js";
 import { NotFoundError } from "../../errors/customError.js";
+import BaseController from "../base.controller.js";
 import { likeBadge } from "./groups-badge.js";
 
 const updateLikeCount = async (groupId, isLike) => {
@@ -11,10 +12,10 @@ const updateLikeCount = async (groupId, isLike) => {
   });
 };
 
-export const likeGroup = async (req, res, next) => {
-  try {
+class GroupLikeController {
+  // 좋아요
+  like = BaseController.handle(async (req, res) => {
     const groupId = BigInt(req.params.groupId);
-
     const group = await prisma.group.findUnique({
       where: { id: groupId },
       select: { id: true },
@@ -25,19 +26,14 @@ export const likeGroup = async (req, res, next) => {
     }
 
     await updateLikeCount(groupId, true);
-
     await likeBadge(groupId);
 
     return res.sendStatus(200);
-  } catch (err) {
-    next(err);
-  }
-};
+  });
 
-export const unLikeGroup = async (req, res, next) => {
-  try {
+  // 좋아요 취소
+  unlike = BaseController.handle(async (req, res) => {
     const groupId = BigInt(req.params.groupId);
-
     const group = await prisma.group.findUnique({
       where: { id: groupId },
       select: { id: true, like_count: true },
@@ -46,13 +42,12 @@ export const unLikeGroup = async (req, res, next) => {
     if (!group) {
       throw new NotFoundError("존재하지 않는 그룹입니다.");
     }
-
     if (group.like_count > 0) {
       await updateLikeCount(groupId, false);
     }
 
     return res.sendStatus(200);
-  } catch (err) {
-    next(err);
-  }
-};
+  });
+}
+
+export default new GroupLikeController();
