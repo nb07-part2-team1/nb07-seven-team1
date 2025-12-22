@@ -1,12 +1,12 @@
 import express from "express";
-import * as groupLikeController from "../../modules/groups/groups-like.js";
+import GroupLikeController from "../../modules/groups/groups-like.controller.js";
 
 const router = express.Router();
 
 // POST /groups/{groupId}/likes
-router.post("/:groupId/likes", groupLikeController.likeGroup);
+router.post("/:groupId/likes", GroupLikeController.like);
 
 // DELETE /groups/{groupId}/likes
-router.delete("/:groupId/likes", groupLikeController.unLikeGroup);
+router.delete("/:groupId/likes", GroupLikeController.unlike);
 
 export default router;

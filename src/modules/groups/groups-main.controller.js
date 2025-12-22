@@ -2,6 +2,7 @@ import { UnregistereGroup } from "../../entities/group.js";
 import { prisma } from "../../../prisma/prisma.js";
 import { UnregisteredUser, User } from "../../entities/user.js";
 import { UnauthorizedError } from "../../errors/customError.js";
+import BaseController from "../base.controller.js";
 
 const formatGroupResponse = (group) => {
   const owner = group.users.find((user) => group.owner.user_id === user.id);
@@ -35,63 +36,7 @@ const formatGroupResponse = (group) => {
     badges,
   };
 };
-export const createGroup = async (req, res, next) => {
-  try {
-    const createGroupInfo = UnregistereGroup.formInfo(req.body);
-    const createdGroup = await prisma.group.create({
-      data: { ...createGroupInfo, like_count: 0 },
-    });
 
-    const createOwnerInfo = UnregisteredUser.formInfo({
-      name: req.body.ownerNickname,
-      password: req.body.ownerPassword,
-      groupId: createdGroup.id,
-    });
-
-    const inputUser = await prisma.user.create({
-      data: createOwnerInfo,
-    });
-    await prisma.owner.create({
-      data: {
-        user_id: inputUser.id,
-        group_id: createdGroup.id,
-      },
-    });
-    const newGroupInfo = await prisma.group.findUnique({
-      where: { id: createdGroup.id },
-      include: {
-        owner: true,
-        users: true,
-        badges: true,
-      },
-    });
-    const result = formatGroupResponse(newGroupInfo);
-
-    res.status(201).json(result);
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getGroup = async (req, res, next) => {
-  try {
-    const groupId = req.params.groupId;
-
-    const newGroupInfo = await prisma.group.findUnique({
-      where: { id: groupId },
-      include: {
-        owner: true,
-        users: true,
-        badges: true,
-      },
-    });
-
-    const result = formatGroupResponse(newGroupInfo);
-    res.status(200).json(result);
-  } catch (error) {
-    next(error);
-  }
-};
 const getOrderBy = (order, direction) => {
   switch (order) {
     case "likeCount":
@@ -110,35 +55,6 @@ const getOrderBy = (order, direction) => {
   }
 };
 
-export const getGroups = async (req, res, next) => {
-  try {
-    const { page, limit, order, orderBy, search } = req.query;
-    const newOrderBy = getOrderBy(orderBy, order);
-    const [groups, groupCount] = await Promise.all([
-      prisma.group.findMany({
-        ...(!search && {
-          where: { name: { contains: search, mode: "insensitive" } },
-        }),
-        skip: (parseInt(page) - 1) * parseInt(limit),
-        take: parseInt(limit),
-        orderBy: newOrderBy,
-        include: {
-          owner: true,
-          users: true,
-          badges: true,
-        },
-      }),
-      prisma.group.count(),
-    ]);
-    const result = groups.map((group) => {
-      return formatGroupResponse(group);
-    });
-
-    res.status(200).json({ data: result, total: groupCount });
-  } catch (error) {
-    next(error);
-  }
-};
 const verifyGroupOwner = async (groupId, password) => {
   const groupWithOwnerUser = await prisma.group.findUnique({
     where: {
@@ -164,8 +80,87 @@ const verifyGroupOwner = async (groupId, password) => {
   }
 };
 
-export const patchGroup = async (req, res, next) => {
-  try {
+class GroupMainController {
+  // 그룹 생성
+  createGroup = BaseController.handle(async (req, res) => {
+    const createGroupInfo = UnregistereGroup.formInfo(req.body);
+    const createdGroup = await prisma.group.create({
+      data: { ...createGroupInfo, like_count: 0 },
+    });
+    const createOwnerInfo = UnregisteredUser.formInfo({
+      name: req.body.ownerNickname,
+      password: req.body.ownerPassword,
+      groupId: createdGroup.id,
+    });
+    const inputUser = await prisma.user.create({
+      data: createOwnerInfo,
+    });
+
+    await prisma.owner.create({
+      data: {
+        user_id: inputUser.id,
+        group_id: createdGroup.id,
+      },
+    });
+
+    const newGroupInfo = await prisma.group.findUnique({
+      where: { id: createdGroup.id },
+      include: {
+        owner: true,
+        users: true,
+        badges: true,
+      },
+    });
+    const result = formatGroupResponse(newGroupInfo);
+
+    res.status(201).json(result);
+  });
+
+  // 그룹 목록 가져오기
+  getGroups = BaseController.handle(async (req, res) => {
+    const { page, limit, order, orderBy, search } = req.query;
+    const newOrderBy = getOrderBy(orderBy, order);
+    const [groups, groupCount] = await Promise.all([
+      prisma.group.findMany({
+        ...(!search && {
+          where: { name: { contains: search, mode: "insensitive" } },
+        }),
+        skip: (parseInt(page) - 1) * parseInt(limit),
+        take: parseInt(limit),
+        orderBy: newOrderBy,
+        include: {
+          owner: true,
+          users: true,
+          badges: true,
+        },
+      }),
+      prisma.group.count(),
+    ]);
+
+    const result = groups.map((group) => formatGroupResponse(group));
+
+    res.status(200).json({ data: result, total: groupCount });
+  });
+
+  // 그룹 상세정보 가져오기
+  getGroup = BaseController.handle(async (req, res) => {
+    const groupId = req.params.groupId;
+    const newGroupInfo = await prisma.group.findUnique({
+      where: { id: groupId },
+      include: {
+        owner: true,
+        users: true,
+        badges: true,
+      },
+    });
+
+    const result = formatGroupResponse(newGroupInfo);
+
+    res.status(200).json(result);
+  });
+
+  // 그룹 수정
+  updateGroup = BaseController.handle(async (req, res) => {
     const groupId = req.params.groupId;
     const { ownerNickname, ownerPassword, ...updateData } = req.body;
     const newUpdateData = UnregistereGroup.formInfo(updateData);
@@ -186,14 +181,12 @@ export const patchGroup = async (req, res, next) => {
     });
 
     const result = formatGroupResponse(newGroupInfo);
-    res.status(200).json(result);
-  } catch (error) {
-    next(error);
-  }
-};
 
-export const deleteGroup = async (req, res, next) => {
-  try {
+    res.status(200).json(result);
+  });
+
+  // 그룹 삭제
+  deleteGroup = BaseController.handle(async (req, res) => {
     const { groupId } = req.params;
     const { ownerPassword } = req.body;
     await verifyGroupOwner(groupId, ownerPassword);
@@ -215,8 +208,8 @@ export const deleteGroup = async (req, res, next) => {
       });
     });
 
-    res.status(200).send({ message: "그룹이 삭제되었습니다." });
-  } catch (error) {
-    next(error);
-  }
-};
+    res.status(200).send({ ownerPassword });
+  });
+}
+
+export default new GroupMainController();

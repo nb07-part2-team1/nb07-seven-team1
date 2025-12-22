@@ -1,4 +1,5 @@
 import { prisma } from "../../../prisma/prisma.js";
+import BaseController from "../base.controller.js";
 
 const getStartDateByType = (type) => {
   const now = new Date();
@@ -16,8 +17,9 @@ const getStartDateByType = (type) => {
   return new Date(now.getFullYear(), now.getMonth(), 1);
 };
 
-export const getRank = async (req, res, next) => {
-  try {
+class GroupRankController {
+  // 운동기록 랭킹 가져오기
+  getWorkoutRank = BaseController.handle(async (req, res) => {
     const groupId = req.params.groupId;
     const duration = req.query.duration;
     const startDate = getStartDateByType(duration);
@@ -45,7 +47,7 @@ export const getRank = async (req, res, next) => {
     });
 
     res.status(200).json(result);
-  } catch (error) {
-    next(error);
-  }
-};
+  });
+}
+
+export default new GroupRankController();

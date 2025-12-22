@@ -1,7 +1,9 @@
 import { uploadImageToS3 } from "../../utils/s3Uploader.js";
+import BaseController from "../base.controller.js";
+import { BadRequestError } from "../../errors/customError.js";
 
-export const uploadImages = async (req, res, next) => {
-  try {
+class UploadController {
+  uploadImages = BaseController.handle(async (req, res) => {
     if (!req.files || req.files.length === 0) {
       throw new BadRequestError("No files uploaded");
     }
@@ -11,7 +13,7 @@ export const uploadImages = async (req, res, next) => {
     );
 
     res.status(200).json({ urls });
-  } catch (err) {
-    next(err);
-  }
-};
+  });
+}
+
+export default new UploadController();

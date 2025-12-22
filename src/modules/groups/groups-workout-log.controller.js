@@ -1,9 +1,8 @@
-//../modeules/groups/groups-workout.js
-
 import { prisma } from "../../../prisma/prisma.js";
 import { UnregistereWorkoutRecord } from "../../entities/workout-log.js";
 import { NotFoundError, UnauthorizedError } from "../../errors/customError.js";
 import { workoutBadge } from "./groups-badge.js";
+import BaseController from "../base.controller.js";
 
 const convertExerciseTypeName = (exerciseType) => {
   switch (exerciseType) {
@@ -29,9 +28,9 @@ const responseFormat = (record) => ({
   },
 });
 
-// 기록 생성 /groups/:groupId/records
-export const createRecord = async (req, res, next) => {
-  try {
+class GroupWorkouLogController {
+  // 운동기록 생성
+  create = BaseController.handle(async (req, res) => {
     const { groupId } = req.params;
     const { authorNickname, authorPassword, ...recordData } = req.body;
 
@@ -82,51 +81,10 @@ export const createRecord = async (req, res, next) => {
     const responsePayload = responseFormat(newRecord);
 
     return res.status(201).json(responsePayload);
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-//상세 조회
-export const getRecordDetail = async (req, res, next) => {
-  try {
-    const { recordId } = req.params;
-
-    const record = await prisma.workoutLog.findUnique({
-      where: { id: BigInt(recordId) },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            group: {
-              select: {
-                name: true,
-                description: true,
-                tags: true,
-                goal_reps: true,
-                discord_server_url: true,
-                users: { select: { id: true } },
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!record) throw new NotFoundError("해당 운동 기록을 찾을 수 없습니다.");
-
-    const responsePayload = responseFormat(record);
-
-    return res.status(200).json(responsePayload);
-  } catch (error) {
-    next(error);
-  }
-};
-
-//운동기록 목록 조회
-export const getRecords = async (req, res, next) => {
-  try {
+  // 운동기록 리스트 가져오기
+  getRecords = BaseController.handle(async (req, res) => {
     const { groupId } = req.params;
     const { sort = "latest", search = "", page = 1, limit = 10 } = req.query;
 
@@ -166,7 +124,40 @@ export const getRecords = async (req, res, next) => {
       data: recordsData,
       total: totalCount,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
+
+  // 운동기록 상세정보 가져오기
+  getRecordDetail = BaseController.handle(async (req, res) => {
+    const { recordId } = req.params;
+
+    const record = await prisma.workoutLog.findUnique({
+      where: { id: BigInt(recordId) },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            group: {
+              select: {
+                name: true,
+                description: true,
+                tags: true,
+                goal_reps: true,
+                discord_server_url: true,
+                users: { select: { id: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!record) throw new NotFoundError("해당 운동 기록을 찾을 수 없습니다.");
+
+    const responsePayload = responseFormat(record);
+
+    return res.status(200).json(responsePayload);
+  });
+}
+
+export default new GroupWorkouLogController();
