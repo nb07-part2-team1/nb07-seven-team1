@@ -83,28 +83,37 @@ const verifyGroupOwner = async (groupId, password) => {
 class GroupMainController {
   // 그룹 생성
   createGroup = BaseController.handle(async (req, res) => {
-    const createGroupInfo = UnregistereGroup.formInfo(req.body);
-    const createdGroup = await prisma.group.create({
-      data: { ...createGroupInfo, like_count: 0 },
-    });
-    const createOwnerInfo = UnregisteredUser.formInfo({
-      name: req.body.ownerNickname,
-      password: req.body.ownerPassword,
-      groupId: createdGroup.id,
-    });
-    const inputUser = await prisma.user.create({
-      data: createOwnerInfo,
+    //트랜잭션으로 throw 될 경우 롤백
+    const transactionResult = await prisma.$transaction(async (tx) => {
+      const createGroupInfo = UnregistereGroup.formInfo(req.body);
+
+      const createdGroup = await prisma.group.create({
+        data: { ...createGroupInfo, like_count: 0 },
+      });
+
+      const createOwnerInfo = UnregisteredUser.formInfo({
+        name: req.body.ownerNickname,
+        password: req.body.ownerPassword,
+        groupId: createdGroup.id,
+        ownerCheck: true,
+      });
+
+      const inputUser = await prisma.user.create({
+        data: createOwnerInfo,
+      });
+
+      return { createdGroup, inputUser };
     });
 
     await prisma.owner.create({
       data: {
-        user_id: inputUser.id,
-        group_id: createdGroup.id,
+        user_id: transactionResult.inputUser.id,
+        group_id: transactionResult.createdGroup.id,
       },
     });
 
     const newGroupInfo = await prisma.group.findUnique({
-      where: { id: createdGroup.id },
+      where: { id: transactionResult.createdGroup.id },
       include: {
         owner: true,
         users: true,
