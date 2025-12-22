@@ -83,33 +83,36 @@ const verifyGroupOwner = async (groupId, password) => {
 class GroupMainController {
   // 그룹 생성
   createGroup = BaseController.handle(async (req, res) => {
-    const createGroupInfo = UnregistereGroup.formInfo(req.body);
-    const createdGroup = await prisma.group.create({
-      data: { ...createGroupInfo, like_count: 0 },
-    });
-    if (!req.body.ownerNickname || !req.body.ownerPassword) {
-      return res
-        .status(400)
-        .send({ message: "오너 아이디와 비밀번호가 필요합니다 " });
-    }
-    const createOwnerInfo = UnregisteredUser.formInfo({
-      name: req.body.ownerNickname,
-      password: req.body.ownerPassword,
-      groupId: createdGroup.id,
-    });
-    const inputUser = await prisma.user.create({
-      data: createOwnerInfo,
+    const transactionResult = await prisma.$transaction(async (tx) => {
+      const createGroupInfo = UnregistereGroup.formInfo(req.body);
+
+      const createdGroup = await prisma.group.create({
+        data: { ...createGroupInfo, like_count: 0 },
+      });
+
+      const createOwnerInfo = UnregisteredUser.formInfo({
+        name: req.body.ownerNickname,
+        password: req.body.ownerPassword,
+        groupId: createdGroup.id,
+        ownerCheck: true,
+      });
+
+      const inputUser = await prisma.user.create({
+        data: createOwnerInfo,
+      });
+
+      return { createdGroup, inputUser };
     });
 
     await prisma.owner.create({
       data: {
-        user_id: inputUser.id,
-        group_id: createdGroup.id,
+        user_id: transactionResult.inputUser.id,
+        group_id: transactionResult.createdGroup.id,
       },
     });
 
     const newGroupInfo = await prisma.group.findUnique({
-      where: { id: createdGroup.id },
+      where: { id: transactionResult.createdGroup.id },
       include: {
         owner: true,
         users: true,
@@ -120,16 +123,17 @@ class GroupMainController {
 
     res.status(201).json(result);
   });
-
   // 그룹 목록 가져오기
   getGroups = BaseController.handle(async (req, res) => {
-    const { page, limit, order, orderBy, search } = req.query;
+    const { page = 1, limit = 10, order, orderBy, search } = req.query;
     const newOrderBy = getOrderBy(orderBy, order);
+    const where = search
+      ? { name: { contains: search, mode: "insensitive" } }
+      : {};
+
     const [groups, groupCount] = await Promise.all([
       prisma.group.findMany({
-        ...(!search && {
-          where: { name: { contains: search, mode: "insensitive" } },
-        }),
+        where: where,
         skip: (parseInt(page) - 1) * parseInt(limit),
         take: parseInt(limit),
         orderBy: newOrderBy,
@@ -139,7 +143,7 @@ class GroupMainController {
           badges: true,
         },
       }),
-      prisma.group.count(),
+      prisma.group.count({ where: where }),
     ]);
 
     const result = groups.map((group) => formatGroupResponse(group));
