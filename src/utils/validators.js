@@ -4,7 +4,8 @@ import {
   validatePositiveInteger,
   validateDate,
   validateLength,
-  validateUrl,
+  validateWebhookUrl,
+  validateSeverUrl,
   validateTime,
   validateArray,
 } from "./validators.common.js";
@@ -47,13 +48,13 @@ export const validateUnregisteredGroup = ({
   validatePositiveInteger({ value: goal_reps, path: "goalReps" });
 
   //discordWebURL 검증
-  validateUrl({
+  validateWebhookUrl({
     value: discord_web_url,
     path: "discordWebhookUrl",
   });
 
   //discordInviteURL 검증
-  validateUrl({
+  validateSeverUrl({
     value: discord_server_url,
     path: "discordInviteUrl",
   });
@@ -73,13 +74,13 @@ export const validateGroup = ({
   updatedAt,
 }) => {
   //discordWebURL 검증
-  validateUrl({
+  validateWebhookUrl({
     value: discordWebhookUrl,
     path: "discordWebhookUrl",
   });
 
   //discordInviteURL 검증
-  validateUrl({
+  validateSeverUrl({
     value: discordInviteUrl,
     path: "discordInviteUrl",
   });

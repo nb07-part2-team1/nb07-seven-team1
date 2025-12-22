@@ -137,10 +137,21 @@ export const validatePhotoUrl = ({ value, path }) => {
 };
 
 //값(value) URL 형식 체크
-export const validateUrl = ({ value, path }) => {
-  try {
-    new URL(value);
-  } catch {
+export const validateWebhookUrl = ({ value, path }) => {
+  const urlRegex = /^https:\/\/discord\.com\/api\/webhooks/;
+
+  if (!urlRegex.test(value)) {
+    throw new BadRequestError({
+      path,
+      message: "URL 형식이 맞지 않습니다",
+    });
+  }
+};
+
+export const validateSeverUrl = ({ value, path }) => {
+  const urlRegex = /^https:\/\/discord\.gg/;
+
+  if (!urlRegex.test(value)) {
     throw new BadRequestError({
       path,
       message: "URL 형식이 맞지 않습니다",
