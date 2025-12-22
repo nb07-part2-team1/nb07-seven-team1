@@ -124,31 +124,47 @@ class GroupMainController {
     res.status(201).json(result);
   });
   // 그룹 목록 가져오기
+  getOrderBy = (orderBy) => {
+    switch (orderBy) {
+      case "mostLiked":
+        return { likeCount: "desc" };
+      case "mostParticipants":
+        return { users: { _count: "desc" } };
+      case "latest":
+      default:
+        return { createdAt: "desc" };
+    }
+  };
+
   getGroups = BaseController.handle(async (req, res) => {
-    const { page = 1, limit = 10, order, orderBy, search } = req.query;
-    const newOrderBy = getOrderBy(orderBy, order);
+    const { page = 1, limit = 10, orderBy = "latest", search = "" } = req.query;
     const where = search
       ? { name: { contains: search, mode: "insensitive" } }
       : {};
-
+    const orderByCondition = getOrderBy(orderBy);
     const [groups, groupCount] = await Promise.all([
       prisma.group.findMany({
         where: where,
         skip: (parseInt(page) - 1) * parseInt(limit),
         take: parseInt(limit),
-        orderBy: newOrderBy,
+        orderBy: orderByCondition,
         include: {
           owner: true,
           users: true,
           badges: true,
         },
       }),
-      prisma.group.count({ where: where }),
+      prisma.group.count({ where }),
     ]);
 
     const result = groups.map((group) => formatGroupResponse(group));
 
-    res.status(200).json({ data: result, total: groupCount });
+    res.status(200).json({
+      data: result,
+      total: groupCount,
+      currentPage: parseInt(page),
+      totalPage: Math.ceil(totalCount / parseInt(limit)),
+    });
   });
 
   // 그룹 상세정보 가져오기
