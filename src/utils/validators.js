@@ -31,7 +31,7 @@ export const validateUnregisteredGroup = ({
   discord_server_url,
 }) => {
   //name 검증
-  validateLength({ value: name, path: "그룹명", minLength: 3, maxLength: 15 });
+  validateLength({ value: name, path: "name", minLength: 2, maxLength: 15 });
 
   //description 검증
   validateLength({
