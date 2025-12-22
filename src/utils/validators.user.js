@@ -11,8 +11,8 @@ export const validateLength = ({
 }) => {
   if (value.length < minLength || value.length > maxLength) {
     throw new BadRequestError({
-      path: `${path}`,
-      message: `${path}은(는) ${minLength} ~ ${maxLength}자로 작성해 주세요`,
+      path,
+      message: `${minLength} ~ ${maxLength}자로 작성해 주세요`,
     });
   }
 };
@@ -21,10 +21,16 @@ export const validateLength = ({
  * 한글, 영문, 숫자가 아닌 경우 ERROR
  */
 export const validateNameRegex = ({ value, path }) => {
-  const regex = /^[a-z0-9가-힣]+$/;
+  const regex = /^[A-Za-z가-힣][A-Za-z0-9가-힣]*$/;
+  if (/^\d/.test(value)) {
+    throw new BadRequestError({
+      path,
+      message: "닉네임은 숫자로 시작할 수 없습니다",
+    });
+  }
   if (!regex.test(value)) {
     throw new BadRequestError({
-      path: `${path}`,
+      path,
       message: `닉네임은 한글, 영문, 숫자만 사용 가능합니다`,
     });
   }
