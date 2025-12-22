@@ -1,7 +1,3 @@
-// app.js 또는 index.js 최상단에 추가하세요
-// BigInt.prototype.toJSON = function () {
-//   return this.toString();
-// };
 import { UnregistereGroup } from "../../entities/group.js";
 import { prisma } from "../../../prisma/prisma.js";
 import { UnregisteredUser, User } from "../../entities/user.js";
@@ -134,8 +130,6 @@ export const getGroups = async (req, res, next) => {
       }),
       prisma.group.count(),
     ]);
-
-    // const result = groups.map((group) => formatGroupResponse(group));
     const result = groups.map((group) => {
       return formatGroupResponse(group);
     });
@@ -172,7 +166,6 @@ const verifyGroupOwner = async (groupId, password) => {
 
 export const patchGroup = async (req, res, next) => {
   try {
-    //그룹아이디 확인하고 해당하는 유저아이디 빼와서 아이디 패스워드 확인 이 맞는거같은데
     const groupId = req.params.groupId;
     const { ownerNickname, ownerPassword, ...updateData } = req.body;
     const newUpdateData = UnregistereGroup.formInfo(updateData);
