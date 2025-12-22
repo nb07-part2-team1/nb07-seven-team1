@@ -95,21 +95,34 @@ export const validateGroup = ({
 /**
  * user entity validate function
  */
-export const validateUnregisteredUser = ({ name, password, groupId }) => {
+export const validateUnregisteredUser = ({
+  name,
+  password,
+  groupId,
+  ownerCheck,
+}) => {
+  const isNickname = ownerCheck ? "ownerNickname" : "nickname";
+  const isPassword = ownerCheck ? "ownerPassword" : "password";
+
   //nickname 검증
-  validateWhitespace({ value: name, path: "닉네임" });
-  validateLength({ value: name, path: "닉네임", minLength: 3, MaxLength: 10 });
-  validateNameRegex({ value: name, path: "닉네임" });
+  validateWhitespace({ value: name, path: `${isNickname}` });
+  validateLength({
+    value: name,
+    path: `${isNickname}`,
+    minLength: 3,
+    MaxLength: 10,
+  });
+  validateNameRegex({ value: name, path: `${isNickname}` });
 
   //password 검증
-  validateWhitespace({ value: password, path: "password" });
+  validateWhitespace({ value: password, path: `${isPassword}` });
   validateLength({
     value: password,
-    path: "password",
+    path: `${isPassword}`,
     minLength: 8,
     maxLength: 20,
   });
-  validatePasswordRegex({ value: password, path: "password" });
+  validatePasswordRegex({ value: password, path: `${isPassword}` });
 };
 
 export const validateUser = ({
