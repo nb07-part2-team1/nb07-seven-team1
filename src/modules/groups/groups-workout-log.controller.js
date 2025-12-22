@@ -4,6 +4,17 @@ import { NotFoundError, UnauthorizedError } from "../../errors/customError.js";
 import { workoutBadge } from "./groups-badge.js";
 import BaseController from "../base.controller.js";
 
+const convertExerciseTypeName = (exerciseType) => {
+  switch (exerciseType) {
+    case "run":
+      return "달리기";
+    case "swim":
+      return "수영";
+    case "bike":
+      return "사이클링";
+  }
+};
+
 const responseFormat = (record) => ({
   id: Number(record.id),
   exerciseType: record.category,
@@ -27,7 +38,7 @@ class GroupWorkouLogController {
 
     const user = await prisma.user.findFirst({
       where: { name: authorNickname, group_id: BigInt(groupId) },
-      select: { id: true, password: true },
+      select: { id: true, name: true, password: true },
     });
 
     if (!user || authorPassword !== user.password) {
@@ -49,6 +60,23 @@ class GroupWorkouLogController {
     });
 
     await workoutBadge(BigInt(groupId));
+
+    //discord webhook message
+    const groupInfo = await prisma.group.findUnique({
+      where: {
+        id: groupId,
+      },
+    });
+
+    const discordResponse = await fetch(groupInfo.discord_web_url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        content: `${user.name}님의 ${convertExerciseTypeName(recordData.exerciseType)} 운동 기록이 추가되었습니다.`,
+      }),
+    });
 
     const responsePayload = responseFormat(newRecord);
 
