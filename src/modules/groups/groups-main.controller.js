@@ -87,7 +87,7 @@ class GroupMainController {
     const transactionResult = await prisma.$transaction(async (tx) => {
       const createGroupInfo = UnregistereGroup.formInfo(req.body);
 
-      const createdGroup = await prisma.group.create({
+      const createdGroup = await tx.group.create({
         data: { ...createGroupInfo, like_count: 0 },
       });
 
@@ -98,7 +98,7 @@ class GroupMainController {
         ownerCheck: true,
       });
 
-      const inputUser = await prisma.user.create({
+      const inputUser = await tx.user.create({
         data: createOwnerInfo,
       });
 
