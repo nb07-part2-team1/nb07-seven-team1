@@ -131,7 +131,7 @@ class GroupMainController {
     const newOrderBy = getOrderBy(orderBy, order);
     const [groups, groupCount] = await Promise.all([
       prisma.group.findMany({
-        ...(!search && {
+        ...(search && {
           where: { name: { contains: search, mode: "insensitive" } },
         }),
         skip: (parseInt(page) - 1) * parseInt(limit),
