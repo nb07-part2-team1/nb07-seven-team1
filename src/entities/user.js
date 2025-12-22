@@ -32,11 +32,12 @@ export class UnregisteredUser {
     this.group_id = group_id;
   }
 
-  static formInfo({ name, password, groupId }) {
+  static formInfo({ name, password, groupId, ownerCheck = false }) {
     const info = {
       name,
       password,
       group_id: BigInt(groupId),
+      ownerCheck,
     };
 
     //검증 로직
@@ -44,6 +45,7 @@ export class UnregisteredUser {
       name: info.name,
       password: info.password,
       groupId: info.group_id,
+      ownerCheck: info.ownerCheck,
     });
 
     return new UnregisteredUser(info);

@@ -9,6 +9,7 @@ export class UnregistereGroup {
     description,
     image,
     goal_reps,
+    tags,
     discord_web_url,
     discord_server_url,
   }) {
@@ -16,6 +17,7 @@ export class UnregistereGroup {
     this.description = description;
     this.image = image;
     this.goal_reps = goal_reps;
+    this.tags = tags;
     this.discord_web_url = discord_web_url;
     this.discord_server_url = discord_server_url;
   }
