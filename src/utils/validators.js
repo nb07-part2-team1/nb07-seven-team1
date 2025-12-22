@@ -101,28 +101,28 @@ export const validateUnregisteredUser = ({
   groupId,
   ownerCheck,
 }) => {
-  const isNickname = ownerCheck ? "ownerNickname" : "nickname";
-  const isPassword = ownerCheck ? "ownerPassword" : "password";
+  const nicknamePath = ownerCheck ? "ownerNickname" : "nickname";
+  const passwordPath = ownerCheck ? "ownerPassword" : "password";
 
   //nickname 검증
-  validateWhitespace({ value: name, path: `${isNickname}` });
+  validateWhitespace({ value: name, path: `${nicknamePath}` });
   validateLength({
     value: name,
-    path: `${isNickname}`,
+    path: `${nicknamePath}`,
     minLength: 3,
     MaxLength: 10,
   });
-  validateNameRegex({ value: name, path: `${isNickname}` });
+  validateNameRegex({ value: name, path: `${nicknamePath}` });
 
   //password 검증
-  validateWhitespace({ value: password, path: `${isPassword}` });
+  validateWhitespace({ value: password, path: `${nicknamePath}` });
   validateLength({
     value: password,
-    path: `${isPassword}`,
+    path: `${passwordPath}`,
     minLength: 8,
     maxLength: 20,
   });
-  validatePasswordRegex({ value: password, path: `${isPassword}` });
+  validatePasswordRegex({ value: password, path: `${passwordPath}` });
 };
 
 export const validateUser = ({
