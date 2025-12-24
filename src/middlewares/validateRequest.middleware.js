@@ -4,7 +4,7 @@ import { BadRequestError } from "../errors/customError.js";
  *  타입, 필수 검증을 위한 미들웨어
  *
  * @param {Object<string, {
- *  type: 'string' | 'number' | 'boolean' | 'array'
+ *  type: 'string' | 'number' | 'boolean' | 'array' | 'stringInt'
  *  required?: boolean
  * }>} schema
  *
@@ -34,6 +34,17 @@ export const validateRequest = (schema, target = "body") => {
         if (!Array.isArray(value)) {
           throw new BadRequestError({
             message: `${key}의 타입이 array가 아닙니다.`,
+          });
+        }
+        continue;
+      }
+
+      // BigInt 체크
+      if (rules.type === "stringInt") {
+        if (typeof value !== "string" || !/^\d+$/.test(value)) {
+          throw new BadRequestError({
+            message: `${key}는 정수 문자열이어야 합니다.`,
+            path: key,
           });
         }
         continue;

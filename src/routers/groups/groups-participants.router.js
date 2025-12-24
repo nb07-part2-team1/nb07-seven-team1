@@ -7,6 +7,7 @@ const router = express.Router();
 // POST /groups/{groupId}/participants
 router.post(
   "/:groupId/participants",
+  validateRequest({ groupId: { type: "stringInt", required: true } }, "params"),
   validateRequest(
     {
       nickname: { type: "string", require: true },
@@ -20,6 +21,7 @@ router.post(
 // DELETE /groups/{groupId}/participants
 router.delete(
   "/:groupId/participants",
+  validateRequest({ groupId: { type: "stringInt", required: true } }, "params"),
   validateRequest(
     {
       nickname: { type: "string", require: true },
