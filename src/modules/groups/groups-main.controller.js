@@ -1,7 +1,7 @@
 import { UnregistereGroup } from "../../entities/group.js";
 import { prisma } from "../../../prisma/prisma.js";
 import { UnregisteredUser, User } from "../../entities/user.js";
-import { UnauthorizedError } from "../../errors/customError.js";
+import { UnauthorizedError, NotFoundError } from "../../errors/customError.js";
 import BaseController from "../base.controller.js";
 
 const formatGroupResponse = (group) => {
@@ -162,6 +162,10 @@ class GroupMainController {
         badges: true,
       },
     });
+
+    if (newGroupInfo === null) {
+      throw new NotFoundError({ message: "Group not found" });
+    }
 
     const result = formatGroupResponse(newGroupInfo);
 
