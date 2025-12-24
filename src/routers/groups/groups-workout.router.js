@@ -7,6 +7,7 @@ const router = express.Router();
 //post
 router.post(
   "/:groupId/records",
+  validateRequest({ groupId: { type: "stringInt", required: true } }, "params"),
   validateRequest(
     {
       exerciseType: { type: "string", required: true },
@@ -22,10 +23,15 @@ router.post(
   GroupWorkouLogController.create
 );
 //get
-router.get("/:groupId/records", GroupWorkouLogController.getRecords);
+router.get(
+  "/:groupId/records",
+  validateRequest({ groupId: { type: "stringInt", required: true } }, "params"),
+  GroupWorkouLogController.getRecords
+);
 //get 상세
 router.get(
   "/:groupId/records/:recordId",
+  validateRequest({ groupId: { type: "stringInt", required: true } }, "params"),
   GroupWorkouLogController.getRecordDetail
 );
 

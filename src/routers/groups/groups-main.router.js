@@ -22,9 +22,14 @@ router.post(
   GroupMainController.createGroup
 );
 router.get("/", GroupMainController.getGroups);
-router.get("/:groupId", GroupMainController.getGroup);
+router.get(
+  "/:groupId",
+  validateRequest({ groupId: { type: "stringInt", required: true } }, "params"),
+  GroupMainController.getGroup
+);
 router.patch(
   "/:groupId",
+  validateRequest({ groupId: { type: "stringInt", required: true } }, "params"),
   validateRequest(
     {
       name: { type: "string", required: true },
@@ -41,5 +46,9 @@ router.patch(
   ),
   GroupMainController.updateGroup
 );
-router.delete("/:groupId", GroupMainController.deleteGroup);
+router.delete(
+  "/:groupId",
+  validateRequest({ groupId: { type: "stringInt", required: true } }, "params"),
+  GroupMainController.deleteGroup
+);
 export default router;
