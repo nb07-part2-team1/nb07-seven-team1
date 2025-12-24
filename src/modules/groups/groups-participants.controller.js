@@ -21,30 +21,43 @@ const createUser = async ({ group_id, name, password }) => {
   });
 };
 
+const formatGroupResponse = (group) => {
+  const owner = group.users.find((user) => group.owner.user_id === user.id);
+  const participants = group.users.map((user) => ({
+    id: Number(user.id),
+    nickname: user.name,
+    createdAt: user.created_at.getTime(),
+    updatedAt: user.updated_at.getTime(),
+  }));
+  const badges = group.badges.map((badge) => badge.content);
+
+  return {
+    id: Number(group.id),
+    name: group.name,
+    description: group.description,
+    photoUrl: group.image ?? null,
+    goalRep: group.goal_reps,
+    discordWebhookUrl: group.discord_web_url,
+    discordInviteUrl: group.discord_server_url,
+    likeCount: group.like_count,
+    tags: group.tags ?? [],
+    owner: {
+      id: Number(owner.id),
+      nickname: owner.name,
+      createdAt: owner.created_at.getTime(),
+      updatedAt: owner.updated_at.getTime(),
+    },
+    participants,
+    createdAt: group.created_at.getTime(),
+    updatedAt: group.updated_at.getTime(),
+    badges,
+  };
+};
+
 //참가 유저 삭제
 const deleteUser = async (userId) => {
   await prisma.user.delete({
     where: { id: userId },
-  });
-};
-
-// owner, users (password 제외), badges 정보 포함해서 group 조회
-const findGroupWithRelationsData = async (groupId) => {
-  return await prisma.group.findUnique({
-    where: { id: groupId },
-    include: {
-      owner: true,
-      users: {
-        select: {
-          id: true,
-          name: true,
-          created_at: true,
-          updated_at: true,
-          group_id: true,
-        },
-      },
-      badges: true,
-    },
   });
 };
 
@@ -73,14 +86,22 @@ class GroupParticipantsController {
     // 6. 그룹의 참여자 수 조회 (참여자 10명 이상이면 뱃지 부여)
     await participantsBadge(groupId);
 
-    // 7. owner, users, badges 정보 포함해서 group 조회
-    const groupWithRelations = await findGroupWithRelationsData(groupId);
-    // 8. group 유효성 검사
-    const groupEntity = Group.formEntity(groupWithRelations);
-
-    return res.status(200).json({
-      ...groupEntity,
+    const newGroupInfo = await prisma.group.findUnique({
+      where: { id: groupId },
+      include: {
+        owner: true,
+        users: true,
+        badges: true,
+      },
     });
+
+    if (newGroupInfo === null) {
+      throw new NotFoundError({ message: "Group not found" });
+    }
+
+    const result = formatGroupResponse(newGroupInfo);
+
+    return res.status(201).json(result);
   });
 
   // 그룹 떠나기
